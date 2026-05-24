@@ -35,11 +35,17 @@ export default function Home() {
   const chainCurrency: Record<string, string> = { eth: "ETH", polygon: "MATIC", arbitrum: "ETH", optimism: "ETH", base: "ETH" };
   // Handle browser back button (mobile + desktop)
   useEffect(() => {
-    const onPopState = () => {
-      setProfile(null);
-      setError(null);
-      setLoading(false);
-      setAnalyzedAddress(null);
+    const onPopState = (e: PopStateEvent) => {
+      if (e.state?.address) {
+        // Forward/redo — restore the analysis
+        handleSearch(e.state.address, e.state.chain || "eth");
+      } else {
+        // Back — return to home
+        setProfile(null);
+        setError(null);
+        setLoading(false);
+        setAnalyzedAddress(null);
+      }
     };
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
@@ -238,15 +244,7 @@ export default function Home() {
         {profile && !loading && (
           <div className="space-y-5">
             {/* Search bar (no dropdown) + Chain tabs */}
-            {/* Back to Home */}
             <div className="space-y-3">
-              <button
-                onClick={goHome}
-                className="flex items-center gap-2 text-sm text-gray-500 hover:text-fuchsia-600 font-medium transition group"
-              >
-                <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
-                Back to Search
-              </button>
               <SearchBar onSearch={handleSearch} loading={loading} chain={analyzedChain} showChainSelector={false} />
               <ChainTabs activeChain={analyzedChain} onChainChange={handleChainSwitch} loading={loading} />
             </div>
