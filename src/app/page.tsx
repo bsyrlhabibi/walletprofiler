@@ -8,9 +8,20 @@ import TokenHoldings from "@/components/token-holdings";
 import TxTimeline from "@/components/tx-timeline";
 import RiskMeter from "@/components/risk-meter";
 import { WalletProfile } from "@/lib/types";
-import { Activity, Sparkles, Zap, Shield, BarChart3, AlertTriangle } from "lucide-react";
+import { Sparkles, Zap, Shield, BarChart3, AlertTriangle, ArrowLeft, Wallet, Globe } from "lucide-react";
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+function WalletLogo({ size = 32 }: { size?: number }) {
+  return (
+    <div
+      className="rounded-xl bg-gradient-to-br from-violet-500 via-fuchsia-500 to-pink-500 flex items-center justify-center shadow-lg shadow-fuchsia-200/50"
+      style={{ width: size, height: size }}
+    >
+      <Wallet className="text-white" style={{ width: size * 0.55, height: size * 0.55 }} />
+    </div>
+  );
+}
 
 export default function Home() {
   const [profile, setProfile] = useState<WalletProfile | null>(null);
@@ -38,32 +49,67 @@ export default function Home() {
     }
   };
 
+  const goHome = () => {
+    setProfile(null);
+    setError(null);
+    setLoading(false);
+  };
+
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="border-b border-indigo-100/50 bg-white/40 backdrop-blur-md sticky top-0 z-50">
+      <header className="border-b border-fuchsia-100/50 bg-white/50 backdrop-blur-xl sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-200">
-              <Activity className="w-4 h-4 text-white" />
+          <button onClick={goHome} className="flex items-center gap-2.5 hover:opacity-80 transition">
+            <WalletLogo size={34} />
+            <div className="flex flex-col">
+              <span className="text-lg font-black gradient-text leading-tight">
+                WalletProfiler
+              </span>
+              <span className="text-[10px] text-gray-400 leading-none">On-Chain Intelligence</span>
             </div>
-            <span className="text-lg font-black gradient-text">
-              WalletProfiler
-            </span>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="text-xs bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full font-semibold border border-indigo-100">
-              Ethereum
-            </span>
+          </button>
+
+          <nav className="hidden sm:flex items-center gap-1">
+            {profile && (
+              <button
+                onClick={goHome}
+                className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-fuchsia-600 px-3 py-1.5 rounded-lg hover:bg-fuchsia-50 transition font-medium"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                Home
+              </button>
+            )}
+            <a
+              href="https://etherscan.io"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-fuchsia-600 px-3 py-1.5 rounded-lg hover:bg-fuchsia-50 transition font-medium"
+            >
+              <Globe className="w-3.5 h-3.5" />
+              Explorer
+            </a>
             <a
               href="https://github.com/bsyrlhabibi/walletprofiler"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-400 hover:text-indigo-500 transition"
+              className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-fuchsia-600 px-3 py-1.5 rounded-lg hover:bg-fuchsia-50 transition font-medium"
             >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+              <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+              GitHub
             </a>
-          </div>
+          </nav>
+
+          {/* Mobile back button */}
+          {profile && (
+            <button
+              onClick={goHome}
+              className="sm:hidden flex items-center gap-1 text-sm text-fuchsia-600 font-medium"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back
+            </button>
+          )}
         </div>
       </header>
 
@@ -74,9 +120,7 @@ export default function Home() {
             {/* Hero */}
             <div className="text-center mb-10">
               <div className="flex items-center justify-center gap-3 mb-5">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-2xl shadow-indigo-300/50 pulse-ring">
-                  <Sparkles className="w-7 h-7 text-white" />
-                </div>
+                <WalletLogo size={56} />
               </div>
               <h1 className="text-5xl font-black mb-3">
                 <span className="gradient-text">WalletProfiler</span>
@@ -100,7 +144,7 @@ export default function Home() {
                   <button
                     key={ex.label}
                     onClick={() => handleSearch(ex.addr)}
-                    className="text-sm text-indigo-600 hover:text-indigo-700 bg-white hover:bg-indigo-50 px-4 py-2 rounded-xl transition font-medium border border-indigo-100 hover:border-indigo-200 shadow-sm hover:shadow-md"
+                    className="text-sm text-fuchsia-600 hover:text-fuchsia-700 bg-white hover:bg-fuchsia-50 px-4 py-2 rounded-xl transition font-medium border border-fuchsia-100 hover:border-fuchsia-200 shadow-sm hover:shadow-md"
                   >
                     {ex.label}
                   </button>
@@ -114,7 +158,7 @@ export default function Home() {
                 { icon: <Zap className="w-5 h-5" />, label: "Degen Score", desc: "0-100 rating", color: "text-amber-500 bg-amber-50" },
                 { icon: <Shield className="w-5 h-5" />, label: "Risk Analysis", desc: "Auto insights", color: "text-emerald-500 bg-emerald-50" },
                 { icon: <BarChart3 className="w-5 h-5" />, label: "Activity Map", desc: "Hourly heatmap", color: "text-indigo-500 bg-indigo-50" },
-                { icon: <Activity className="w-5 h-5" />, label: "Persona", desc: "Wallet identity", color: "text-purple-500 bg-purple-50" },
+                { icon: <Sparkles className="w-5 h-5" />, label: "Persona", desc: "Wallet identity", color: "text-fuchsia-500 bg-fuchsia-50" },
               ].map((f, i) => (
                 <div key={i} className="glass-card p-4 text-center glass-card-hover animate-fade-in" style={{ animationDelay: `${i * 0.1 + 0.3}s`, opacity: 0 }}>
                   <div className={`w-10 h-10 rounded-xl ${f.color} flex items-center justify-center mx-auto mb-2`}>
@@ -132,8 +176,8 @@ export default function Home() {
         {loading && (
           <div className="flex flex-col items-center justify-center min-h-[60vh]">
             <div className="relative mb-6">
-              <div className="w-16 h-16 border-4 border-indigo-100 border-t-indigo-500 rounded-full animate-spin" />
-              <div className="absolute inset-0 w-16 h-16 border-4 border-transparent border-b-purple-400 rounded-full animate-spin" style={{ animationDirection: "reverse", animationDuration: "1.5s" }} />
+              <div className="w-16 h-16 border-4 border-fuchsia-100 border-t-fuchsia-500 rounded-full animate-spin" />
+              <div className="absolute inset-0 w-16 h-16 border-4 border-transparent border-b-pink-400 rounded-full animate-spin" style={{ animationDirection: "reverse", animationDuration: "1.5s" }} />
             </div>
             <p className="text-gray-600 font-medium">Analyzing wallet on-chain...</p>
             <p className="text-gray-400 text-sm mt-1">Fetching balances, tokens, and transaction history</p>
@@ -150,10 +194,10 @@ export default function Home() {
               <p className="text-rose-600 font-bold text-lg mb-2">Analysis Failed</p>
               <p className="text-gray-500 text-sm">{error}</p>
               <button
-                onClick={() => { setError(null); setProfile(null); }}
-                className="mt-5 text-sm text-indigo-600 hover:text-indigo-700 font-semibold bg-indigo-50 px-4 py-2 rounded-xl transition"
+                onClick={goHome}
+                className="mt-5 text-sm text-fuchsia-600 hover:text-fuchsia-700 font-semibold bg-fuchsia-50 px-4 py-2 rounded-xl transition"
               >
-                Try again
+                Back to Home
               </button>
             </div>
           </div>

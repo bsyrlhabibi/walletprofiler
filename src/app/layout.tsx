@@ -14,9 +14,11 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "WalletProfiler — On-Chain Wallet Intelligence",
-  description: "Analyze any Ethereum wallet: persona type, trading patterns, risk score, token holdings, and activity heatmap.",
-  icons: {
-    icon: "/favicon.ico",
+  description: "Analyze any Ethereum wallet: persona type, trading patterns, risk score, token holdings, and activity heatmap. Powered by Alchemy.",
+  openGraph: {
+    title: "WalletProfiler",
+    description: "On-Chain Wallet Intelligence Platform",
+    type: "website",
   },
 };
 
@@ -30,7 +32,7 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-gray-950">{children}</body>
+      <body className="min-h-full flex flex-col bg-[#f0f4ff]">{children}</body>
     </html>
   );
 }
