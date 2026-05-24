@@ -60,12 +60,12 @@ export default function PersonaCard({ pattern, address, ethBalance, totalTokens,
               </div>
             </div>
             <div>
-              <h2 className="text-lg sm:text-2xl font-black text-gray-800">{pattern.personaType}</h2>
-              <p className="text-gray-500 text-sm max-w-xs">{pattern.personaDescription}</p>
+              <h2 className="text-lg sm:text-2xl font-black text-gray-800 dark:text-gray-100">{pattern.personaType}</h2>
+              <p className="text-gray-500 dark:text-gray-400 text-sm max-w-xs">{pattern.personaDescription}</p>
             </div>
           </div>
           <div className="text-right">
-            <div className="text-[10px] text-gray-400 uppercase tracking-widest font-semibold mb-1">Activity Score</div>
+            <div className="text-[10px] text-gray-400 dark:text-gray-500 uppercase tracking-widest font-semibold mb-1">Activity Score</div>
             <div className={`text-3xl sm:text-5xl font-black bg-gradient-to-r ${scoreColor(pattern.activityScore)} bg-clip-text text-transparent`}>
               {pattern.activityScore}
             </div>
@@ -100,13 +100,13 @@ export default function PersonaCard({ pattern, address, ethBalance, totalTokens,
         )}
 
         {/* Address bar */}
-        <div className="bg-gray-50 rounded-xl px-3 py-2 sm:px-4 sm:py-2.5 mb-5 flex items-center justify-between border border-gray-100 gap-2">
+        <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl px-3 py-2 sm:px-4 sm:py-2.5 mb-5 flex items-center justify-between border border-gray-100 dark:border-gray-800 gap-2">
           <div className="flex items-center gap-2 min-w-0">
-            <span className="text-xs text-gray-400 flex-shrink-0">Address</span>
-            <span className="font-mono text-sm text-gray-700 truncate">{address}</span>
+            <span className="text-xs text-gray-400 dark:text-gray-500 flex-shrink-0">Address</span>
+            <span className="font-mono text-sm text-gray-700 dark:text-gray-300 truncate">{address}</span>
           </div>
           <div className="flex items-center gap-2 ml-2 flex-shrink-0">
-            <button onClick={copyAddr} className="text-gray-400 hover:text-fuchsia-500 transition">
+            <button onClick={copyAddr} className="text-gray-400 dark:text-gray-500 hover:text-fuchsia-500 transition">
               {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
             </button>
             {explorerUrl && (
@@ -114,7 +114,7 @@ export default function PersonaCard({ pattern, address, ethBalance, totalTokens,
                 href={`https://${explorerUrl}/address/${address}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-fuchsia-500 transition"
+                className="text-gray-400 dark:text-gray-500 hover:text-fuchsia-500 transition"
                 title={`View on ${explorerUrl}`}
               >
                 <ExternalLink className="w-4 h-4" />
@@ -125,15 +125,15 @@ export default function PersonaCard({ pattern, address, ethBalance, totalTokens,
 
         {/* Activity bar */}
         <div className="mb-5">
-          <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
+          <div className="h-2.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
             <div
               className={`h-full bg-gradient-to-r ${scoreColor(pattern.activityScore)} rounded-full transition-all duration-1000 score-bar-shimmer`}
               style={{ width: `${pattern.activityScore}%` }}
             />
           </div>
           <div className="flex justify-between mt-1">
-            <span className="text-[10px] text-gray-400">Observer 👀</span>
-            <span className="text-[10px] text-gray-400">Whale Degen 🐋</span>
+            <span className="text-[10px] text-gray-400 dark:text-gray-500">Observer 👀</span>
+            <span className="text-[10px] text-gray-400 dark:text-gray-500">Whale Degen 🐋</span>
           </div>
         </div>
 
@@ -210,13 +210,13 @@ function StatBox({ icon, label, value, sub, color }: {
   };
 
   return (
-    <div className={`${bgMap[color] || "bg-gray-50 border-gray-100"} rounded-xl p-3 border glass-card-hover transition-all`}>
-      <div className="flex items-center gap-1.5 text-gray-500 mb-1">
+    <div className={`${bgMap[color] || "bg-gray-50 border-gray-100"} rounded-xl p-3 border glass-card-hover transition-all dark:bg-gray-800/50 dark:border-gray-800`}>
+      <div className="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 mb-1">
         {icon}
         <span className="text-xs font-medium">{label}</span>
       </div>
-      <div className="text-lg font-bold text-gray-800">{value}</div>
-      <div className="text-xs text-gray-400">{sub}</div>
+      <div className="text-lg font-bold text-gray-800 dark:text-gray-100">{value}</div>
+      <div className="text-xs text-gray-400 dark:text-gray-500">{sub}</div>
     </div>
   );
 }
