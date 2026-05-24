@@ -7,6 +7,7 @@ import {
 import { analyzeTransactions } from "@/lib/analysis";
 import { getKnownWalletLabel } from "@/lib/known-wallets";
 import { buildPortfolioBreakdown } from "@/lib/token-categories";
+import { getTokenLogo } from "@/lib/token-logos";
 import { Transaction, TokenBalance, WalletProfile } from "@/lib/types";
 
 function isAddress(addr: string): boolean {
@@ -115,7 +116,7 @@ export async function GET(req: NextRequest) {
         contractAddress: tb.contractAddress,
         name: meta.name || "Unknown",
         symbol,
-        logo: meta.logo || null,
+        logo: getTokenLogo(symbol, meta.logo),
         balance: tb.tokenBalance,
         balanceFormatted: rawBalance / Math.pow(10, decimals),
         decimals,

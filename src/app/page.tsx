@@ -321,10 +321,19 @@ export default function Home() {
             </div>
 
             {/* Footer */}
-            <div className="text-center text-xs text-gray-400 py-6">
-              <span className="bg-white/60 px-4 py-2 rounded-full border border-gray-100">
-                Powered by Alchemy • {analyzedChain === "eth" ? "Ethereum" : analyzedChain === "polygon" ? "Polygon" : analyzedChain === "arbitrum" ? "Arbitrum" : analyzedChain === "optimism" ? "Optimism" : "Base"} mainnet • {profile.pattern.totalTransactions} transactions analyzed
-              </span>
+            <div className="text-center py-8 space-y-3">
+              <div className="flex items-center justify-center gap-2 text-xs text-gray-400">
+                <span className="bg-white/60 px-4 py-2 rounded-full border border-gray-100">
+                  Powered by Alchemy • {analyzedChain === "eth" ? "Ethereum" : analyzedChain === "polygon" ? "Polygon" : analyzedChain === "arbitrum" ? "Arbitrum" : analyzedChain === "optimism" ? "Optimism" : analyzedChain === "bnb" ? "BNB Chain" : "Base"} mainnet • {profile.pattern.totalTransactions} transactions analyzed
+                </span>
+              </div>
+              <div className="flex items-center justify-center gap-2">
+                <span className="text-sm">🐉</span>
+                <span className="text-xs font-medium text-gray-400 tracking-wide">
+                  Built by <span className="font-bold bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 bg-clip-text text-transparent">KOIDRAGON</span> — <span className="text-gray-500">Hermes Agent</span>
+                </span>
+                <span className="text-sm">🐉</span>
+              </div>
             </div>
           </div>
         )}

@@ -1,6 +1,7 @@
 "use client";
 
 import { TokenBalance } from "@/lib/types";
+import { CHAIN_NATIVE_LOGOS } from "@/lib/token-logos";
 import { Coins, ExternalLink, Gem } from "lucide-react";
 
 interface TokenHoldingsProps {
@@ -51,8 +52,8 @@ export default function TokenHoldings({ tokens, ethBalance, chain, explorerUrl =
         {/* Native token (ETH/MATIC) */}
         <div className="flex items-center justify-between py-2.5 px-3 bg-blue-50 rounded-xl border border-gray-200 hover:bg-blue-100 transition sticky top-0 z-10 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${native.color} flex items-center justify-center text-white text-sm font-bold shadow-md shadow-blue-200`}>
-              {native.icon}
+            <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${native.color} flex items-center justify-center overflow-hidden shadow-md shadow-blue-200`}>
+              <img src={CHAIN_NATIVE_LOGOS[chain || "eth"] || CHAIN_NATIVE_LOGOS.eth} alt={native.symbol} className="w-full h-full object-cover rounded-xl" />
             </div>
             <div>
               <div className="text-sm font-semibold text-gray-800">{native.name}</div>
