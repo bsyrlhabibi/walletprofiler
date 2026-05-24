@@ -123,7 +123,7 @@ export default function TxTimeline({ transactions, currency = "ETH", explorerUrl
           <span>Type</span>
         </div>
         <div className="w-[110px] text-center flex-shrink-0">Amount</div>
-        <div className="w-[80px] text-center flex-shrink-0">Age</div>
+        <div className="w-[90px] text-right flex-shrink-0">Age</div>
         <div className="w-[20px] flex-shrink-0"></div>
       </div>
 
@@ -167,7 +167,7 @@ export default function TxTimeline({ transactions, currency = "ETH", explorerUrl
                     {tx.direction === "in" ? "+" : "−"}{value} {token}
                   </div>
                 </div>
-                <div className="w-[80px] text-right flex-shrink-0">
+                <div className="w-[90px] text-right flex-shrink-0">
                   <div className="text-xs text-gray-400">{formatTime(tx.timestamp)}</div>
                 </div>
                 <ExternalLink className="w-3.5 h-3.5 text-gray-300 group-hover:text-fuchsia-400 transition" />
