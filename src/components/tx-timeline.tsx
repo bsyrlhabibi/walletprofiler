@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Transaction } from "@/lib/types";
-import { ArrowDownLeft, ArrowUpRight, RefreshCw, ExternalLink, Clock, ChevronDown } from "lucide-react";
+import { ArrowDownLeft, ArrowUpRight, RefreshCw, ExternalLink, Clock, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 
 interface TxTimelineProps {
   transactions: Transaction[];
@@ -10,13 +10,14 @@ interface TxTimelineProps {
   explorerUrl?: string;
 }
 
-const TX_PER_PAGE = 10;
-
 export default function TxTimeline({ transactions, currency = "ETH", explorerUrl = "etherscan.io" }: TxTimelineProps) {
   const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(10);
 
-  const totalPages = Math.ceil(transactions.length / TX_PER_PAGE);
-  const displayTxs = transactions.slice(0, page * TX_PER_PAGE);
+  const totalPages = Math.max(1, Math.ceil(transactions.length / perPage));
+  const safePage = Math.min(page, totalPages);
+  const start = (safePage - 1) * perPage;
+  const displayTxs = transactions.slice(start, start + perPage);
 
   const getIcon = (dir: string) => {
     switch (dir) {
@@ -86,6 +87,8 @@ export default function TxTimeline({ transactions, currency = "ETH", explorerUrl
     );
   };
 
+  const pageBtn = "px-3 py-1.5 text-sm font-medium rounded-lg border border-indigo-200 text-indigo-600 hover:bg-indigo-50 transition disabled:opacity-40 disabled:cursor-not-allowed";
+
   return (
     <div className="glass-card p-4 animate-fade-in animate-fade-in-delay-3">
       <div className="flex items-center justify-between mb-3">
@@ -98,7 +101,8 @@ export default function TxTimeline({ transactions, currency = "ETH", explorerUrl
         </span>
       </div>
 
-      <div className="space-y-1 max-h-[400px] overflow-y-auto pr-1 scrollbar-thin">
+      {/* Transaction list */}
+      <div className="space-y-1">
         {displayTxs.map((tx, i) => {
           const token = getDisplayToken(tx);
           const value = formatValue(tx);
@@ -106,7 +110,7 @@ export default function TxTimeline({ transactions, currency = "ETH", explorerUrl
 
           return (
             <a
-              key={`${tx.hash}-${i}`}
+              key={`${tx.hash}-${start + i}`}
               href={`https://${explorerUrl}/tx/${tx.hash}`}
               target="_blank"
               rel="noopener noreferrer"
@@ -151,15 +155,47 @@ export default function TxTimeline({ transactions, currency = "ETH", explorerUrl
         )}
       </div>
 
-      {/* Load More button */}
-      {page < totalPages && (
-        <button
-          onClick={() => setPage((p) => p + 1)}
-          className="w-full mt-3 py-2.5 rounded-xl text-sm font-semibold text-fuchsia-600 bg-fuchsia-50 hover:bg-fuchsia-100 border border-fuchsia-100 transition flex items-center justify-center gap-1.5"
-        >
-          <ChevronDown className="w-4 h-4" />
-          Load More ({transactions.length - displayTxs.length} remaining)
-        </button>
+      {/* Pagination bar */}
+      {transactions.length > 0 && (
+        <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-100">
+          {/* Left: Show per page */}
+          <div className="flex items-center gap-2 text-sm text-gray-500">
+            <span>Show:</span>
+            <select
+              value={perPage}
+              onChange={(e) => {
+                setPerPage(Number(e.target.value));
+                setPage(1);
+              }}
+              className="px-2 py-1 rounded-lg border border-gray-200 bg-white text-gray-700 text-sm font-medium cursor-pointer hover:border-indigo-300 transition outline-none"
+            >
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+              <option value={50}>50</option>
+            </select>
+            <span>Records</span>
+          </div>
+
+          {/* Right: Page navigation */}
+          <div className="flex items-center gap-2">
+            <button onClick={() => setPage(1)} disabled={safePage <= 1} className={pageBtn}>
+              <ChevronsLeft className="w-4 h-4" />
+            </button>
+            <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={safePage <= 1} className={pageBtn}>
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <span className="text-sm text-gray-600 font-medium px-2">
+              Page {safePage} of {totalPages}
+            </span>
+            <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={safePage >= totalPages} className={pageBtn}>
+              <ChevronRight className="w-4 h-4" />
+            </button>
+            <button onClick={() => setPage(totalPages)} disabled={safePage >= totalPages} className={pageBtn}>
+              <ChevronsRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );
