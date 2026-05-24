@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import SearchBar from "@/components/search-bar";
 import ChainTabs from "@/components/chain-tabs";
 import PersonaCard from "@/components/persona-card";
@@ -33,24 +33,17 @@ export default function Home() {
   const [analyzedChain, setAnalyzedChain] = useState("eth");
   const [analyzedAddress, setAnalyzedAddress] = useState<string | null>(null);
   const chainCurrency: Record<string, string> = { eth: "ETH", polygon: "MATIC", arbitrum: "ETH", optimism: "ETH", base: "ETH" };
-  // Handle browser back button (mobile + desktop)
-  useEffect(() => {
-    const onPopState = (e: PopStateEvent) => {
-      if (e.state?.address) {
-        // Forward/redo — restore the analysis
-        handleSearch(e.state.address, e.state.chain || "eth");
-      } else {
-        // Back — return to home
-        setProfile(null);
-        setError(null);
-        setLoading(false);
-        setAnalyzedAddress(null);
-      }
-    };
-    window.addEventListener("popstate", onPopState);
-    return () => window.removeEventListener("popstate", onPopState);
-  }, []);
-  const handleSearch = async (address: string, chain: string = "eth") => {
+  const cacheRef = useRef<Map<string, WalletProfile>>(new Map());
+  // Go to home state
+  const goHome = () => {
+    setProfile(null);
+    setError(null);
+    setLoading(false);
+    setAnalyzedAddress(null);
+  };
+
+  // Core fetch — no history manipulation
+  const fetchWallet = async (address: string, chain: string) => {
     setLoading(true);
     setError(null);
     setProfile(null);
@@ -58,9 +51,6 @@ export default function Home() {
     setAnalyzedChain(chain);
     setAnalyzedAddress(address);
 
-
-    // Push history entry so back button works
-    history.pushState({ address, chain }, "", `/?address=${address}&chain=${chain}`);
     try {
       const res = await fetch(`/api/wallet?address=${address}&chain=${chain}`);
       if (!res.ok) {
@@ -69,6 +59,7 @@ export default function Home() {
       }
       const data: WalletProfile = await res.json();
       setProfile(data);
+      cacheRef.current.set(`${address}-${chain}`, data);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Failed to analyze wallet";
       setError(msg);
@@ -76,6 +67,38 @@ export default function Home() {
       setLoading(false);
     }
   };
+
+  // User-initiated search — push history + fetch
+  const handleSearch = async (address: string, chain: string = "eth") => {
+    history.pushState({ address, chain }, "", `/?address=${address}&chain=${chain}`);
+    await fetchWallet(address, chain);
+  };
+
+  // Handle browser back/forward buttons
+  useEffect(() => {
+    const onPopState = (e: PopStateEvent) => {
+      if (e.state?.address) {
+        // Forward/redo — restore from cache or fetch
+        const key = `${e.state.address}-${e.state.chain || "eth"}`;
+        const cached = cacheRef.current.get(key);
+        if (cached) {
+          setProfile(cached);
+          setAnalyzedChain(e.state.chain || "eth");
+          setAnalyzedAddress(e.state.address);
+          setCurrentChain(e.state.chain || "eth");
+          setError(null);
+          setLoading(false);
+        } else {
+          fetchWallet(e.state.address, e.state.chain || "eth");
+        }
+      } else {
+        // Back — return to home
+        goHome();
+      }
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
 
   // Switch chain and auto-re-analyze same address
   const handleChainSwitch = (chain: string) => {
@@ -85,10 +108,6 @@ export default function Home() {
     } else {
       setCurrentChain(chain);
     }
-  };
-
-  const goHome = () => {
-    history.back();
   };
 
   return (
