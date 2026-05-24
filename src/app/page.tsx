@@ -140,9 +140,9 @@ export default function Home() {
               <p className="text-xs text-gray-400 mb-3 font-medium">Try an example:</p>
               <div className="flex flex-wrap gap-2 justify-center">
                 {[
-                  { label: "🟣 Vitalik", addr: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045" },
-                  { label: "🟡 CZ Binance", addr: "0x28C6c06298d514Db089934071355E5743bf21d60" },
-                  { label: "🔵 Base", addr: "0x4c80E281196C0F65E6A820D90600E0721aB7946c" },
+                  { label: "🟣 Vitalik Buterin", addr: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045" },
+                  { label: "🔴 Arbitrum DAO", addr: "0xf7753A50B0C1f22235C0A1E4871830C60D7f132a" },
+                  { label: "🔵 Base Wallet", addr: "0x4c80E281196C0F65E6A820D90600E0721aB7946c" },
                 ].map((ex) => (
                   <button
                     key={ex.label}
