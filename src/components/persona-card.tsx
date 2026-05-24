@@ -1,7 +1,8 @@
 "use client";
 
 import { TradingPattern } from "@/lib/types";
-import { Shield, TrendingUp, Flame, Zap } from "lucide-react";
+import { Shield, TrendingUp, Flame, Zap, Copy, Check } from "lucide-react";
+import { useState } from "react";
 
 interface PersonaCardProps {
   pattern: TradingPattern;
@@ -11,88 +12,112 @@ interface PersonaCardProps {
 }
 
 export default function PersonaCard({ pattern, address, ethBalance, totalTokens }: PersonaCardProps) {
-  const scoreColor = (score: number) => {
-    if (score >= 80) return "text-red-400";
-    if (score >= 60) return "text-orange-400";
-    if (score >= 40) return "text-yellow-400";
-    if (score >= 20) return "text-blue-400";
-    return "text-gray-400";
+  const [copied, setCopied] = useState(false);
+
+  const copyAddr = () => {
+    navigator.clipboard.writeText(address);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
-  const scoreGradient = (score: number) => {
-    if (score >= 80) return "from-red-500 to-orange-500";
-    if (score >= 60) return "from-orange-500 to-yellow-500";
-    if (score >= 40) return "from-yellow-500 to-green-500";
-    if (score >= 20) return "from-blue-500 to-cyan-500";
-    return "from-gray-500 to-gray-600";
+  const scoreColor = (score: number) => {
+    if (score >= 80) return "from-rose-500 to-orange-500";
+    if (score >= 60) return "from-orange-500 to-amber-500";
+    if (score >= 40) return "from-emerald-500 to-teal-500";
+    if (score >= 20) return "from-blue-500 to-indigo-500";
+    return "from-gray-400 to-gray-500";
+  };
+
+  const scoreTextColor = (score: number) => {
+    if (score >= 80) return "text-rose-600";
+    if (score >= 60) return "text-orange-600";
+    if (score >= 40) return "text-emerald-600";
+    if (score >= 20) return "text-blue-600";
+    return "text-gray-500";
   };
 
   return (
-    <div className="bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800 rounded-2xl border border-gray-700/50 p-6 relative overflow-hidden">
-      {/* Background glow */}
-      <div className="absolute top-0 right-0 w-64 h-64 bg-purple-600/5 rounded-full blur-3xl" />
-      
+    <div className="glass-card p-6 animate-fade-in relative overflow-hidden">
+      {/* Decorative blobs */}
+      <div className="absolute -top-20 -right-20 w-60 h-60 bg-gradient-to-br from-indigo-200/30 to-purple-200/20 rounded-full blur-3xl" />
+      <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-gradient-to-br from-cyan-200/20 to-blue-200/10 rounded-full blur-2xl" />
+
       <div className="relative">
         {/* Header */}
-        <div className="flex items-start justify-between mb-6">
-          <div>
-            <div className="flex items-center gap-3 mb-1">
-              <span className="text-5xl">{pattern.personaEmoji}</span>
-              <div>
-                <h2 className="text-2xl font-bold text-white">{pattern.personaType}</h2>
-                <p className="text-gray-400 text-sm">{pattern.personaDescription}</p>
+        <div className="flex items-start justify-between mb-5">
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center text-5xl shadow-lg shadow-indigo-200/50 pulse-ring">
+                {pattern.personaEmoji}
               </div>
+            </div>
+            <div>
+              <h2 className="text-2xl font-black text-gray-800">{pattern.personaType}</h2>
+              <p className="text-gray-500 text-sm max-w-xs">{pattern.personaDescription}</p>
             </div>
           </div>
           <div className="text-right">
-            <div className={`text-4xl font-black ${scoreColor(pattern.degenScore)}`}>
+            <div className={`text-5xl font-black bg-gradient-to-r ${scoreColor(pattern.degenScore)} bg-clip-text text-transparent`}>
               {pattern.degenScore}
             </div>
-            <div className="text-xs text-gray-500 uppercase tracking-wider">Degen Score</div>
+            <div className="text-[10px] text-gray-400 uppercase tracking-widest font-semibold">Degen Score</div>
           </div>
         </div>
 
-        {/* Address */}
-        <div className="bg-gray-800/50 rounded-lg px-4 py-2 mb-6">
-          <span className="text-xs text-gray-500">Address</span>
-          <p className="font-mono text-sm text-gray-300 truncate">{address}</p>
+        {/* Address bar */}
+        <div className="bg-gray-50 rounded-xl px-4 py-2.5 mb-5 flex items-center justify-between border border-gray-100">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="text-xs text-gray-400 flex-shrink-0">Address</span>
+            <span className="font-mono text-sm text-gray-700 truncate">{address}</span>
+          </div>
+          <button onClick={copyAddr} className="text-gray-400 hover:text-indigo-500 transition ml-2 flex-shrink-0">
+            {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
+          </button>
         </div>
 
         {/* Score bar */}
-        <div className="mb-6">
-          <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
+        <div className="mb-5">
+          <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
             <div
-              className={`h-full bg-gradient-to-r ${scoreGradient(pattern.degenScore)} rounded-full transition-all duration-1000`}
+              className={`h-full bg-gradient-to-r ${scoreColor(pattern.degenScore)} rounded-full transition-all duration-1000 score-bar-shimmer`}
               style={{ width: `${pattern.degenScore}%` }}
             />
+          </div>
+          <div className="flex justify-between mt-1">
+            <span className="text-[10px] text-gray-400">Observer</span>
+            <span className="text-[10px] text-gray-400">Whale Degen 🐋</span>
           </div>
         </div>
 
         {/* Stats grid */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <StatBox
-            icon={<TrendingUp className="w-4 h-4" />}
+            icon={<TrendingUp className="w-4 h-4 text-indigo-500" />}
             label="ETH Balance"
             value={ethBalance.toFixed(4)}
             sub={`${totalTokens} tokens`}
+            color="indigo"
           />
           <StatBox
-            icon={<Flame className="w-4 h-4" />}
+            icon={<Flame className="w-4 h-4 text-orange-500" />}
             label="Transactions"
             value={pattern.totalTransactions.toString()}
             sub={`${pattern.activeDays} active days`}
+            color="orange"
           />
           <StatBox
-            icon={<Zap className="w-4 h-4" />}
+            icon={<Zap className="w-4 h-4 text-amber-500" />}
             label="Volume"
             value={`${pattern.totalVolume.toFixed(2)} Ξ`}
             sub={`Avg ${pattern.avgTxValue.toFixed(4)} Ξ`}
+            color="amber"
           />
           <StatBox
-            icon={<Shield className="w-4 h-4" />}
+            icon={<Shield className="w-4 h-4 text-emerald-500" />}
             label="Risk Score"
             value={`${pattern.riskScore}/100`}
             sub={`${pattern.uniqueContracts} contracts`}
+            color="emerald"
           />
         </div>
       </div>
@@ -100,20 +125,28 @@ export default function PersonaCard({ pattern, address, ethBalance, totalTokens 
   );
 }
 
-function StatBox({ icon, label, value, sub }: {
+function StatBox({ icon, label, value, sub, color }: {
   icon: React.ReactNode;
   label: string;
   value: string;
   sub: string;
+  color: string;
 }) {
+  const bgMap: Record<string, string> = {
+    indigo: "bg-indigo-50 border-indigo-100",
+    orange: "bg-orange-50 border-orange-100",
+    amber: "bg-amber-50 border-amber-100",
+    emerald: "bg-emerald-50 border-emerald-100",
+  };
+
   return (
-    <div className="bg-gray-800/50 rounded-xl p-3 border border-gray-700/30">
-      <div className="flex items-center gap-1.5 text-gray-400 mb-1">
+    <div className={`${bgMap[color] || "bg-gray-50 border-gray-100"} rounded-xl p-3 border glass-card-hover transition-all`}>
+      <div className="flex items-center gap-1.5 text-gray-500 mb-1">
         {icon}
-        <span className="text-xs">{label}</span>
+        <span className="text-xs font-medium">{label}</span>
       </div>
-      <div className="text-lg font-bold text-white">{value}</div>
-      <div className="text-xs text-gray-500">{sub}</div>
+      <div className="text-lg font-bold text-gray-800">{value}</div>
+      <div className="text-xs text-gray-400">{sub}</div>
     </div>
   );
 }

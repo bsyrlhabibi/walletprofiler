@@ -8,7 +8,7 @@ import TokenHoldings from "@/components/token-holdings";
 import TxTimeline from "@/components/tx-timeline";
 import RiskMeter from "@/components/risk-meter";
 import { WalletProfile } from "@/lib/types";
-import { Activity, Sparkles } from "lucide-react";
+import { Activity, Sparkles, Zap, Shield, BarChart3, AlertTriangle } from "lucide-react";
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -39,23 +39,27 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white">
+    <div className="min-h-screen">
       {/* Header */}
-      <header className="border-b border-gray-800/50">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Activity className="w-6 h-6 text-purple-400" />
-            <span className="text-lg font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+      <header className="border-b border-indigo-100/50 bg-white/40 backdrop-blur-md sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-200">
+              <Activity className="w-4 h-4 text-white" />
+            </div>
+            <span className="text-lg font-black gradient-text">
               WalletProfiler
             </span>
           </div>
-          <div className="flex items-center gap-3 text-gray-500">
-            <span className="text-xs bg-gray-800 px-2 py-1 rounded">Ethereum</span>
+          <div className="flex items-center gap-3">
+            <span className="text-xs bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full font-semibold border border-indigo-100">
+              Ethereum
+            </span>
             <a
-              href="https://github.com/bsyrlhabibi"
+              href="https://github.com/bsyrlhabibi/walletprofiler"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-gray-300 transition"
+              className="text-gray-400 hover:text-indigo-500 transition"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
             </a>
@@ -66,37 +70,60 @@ export default function Home() {
       <main className="max-w-7xl mx-auto px-4 py-8">
         {/* Hero / Search */}
         {!profile && !loading && (
-          <div className="flex flex-col items-center justify-center min-h-[60vh]">
-            <div className="text-center mb-8">
-              <div className="flex items-center justify-center gap-2 mb-4">
-                <Sparkles className="w-8 h-8 text-purple-400" />
-                <h1 className="text-4xl font-black bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
-                  WalletProfiler
-                </h1>
+          <div className="flex flex-col items-center justify-center min-h-[65vh]">
+            {/* Hero */}
+            <div className="text-center mb-10">
+              <div className="flex items-center justify-center gap-3 mb-5">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-2xl shadow-indigo-300/50 pulse-ring">
+                  <Sparkles className="w-7 h-7 text-white" />
+                </div>
               </div>
-              <p className="text-gray-400 max-w-md mx-auto">
+              <h1 className="text-5xl font-black mb-3">
+                <span className="gradient-text">WalletProfiler</span>
+              </h1>
+              <p className="text-gray-500 max-w-lg mx-auto text-base leading-relaxed">
                 Paste any Ethereum address to get a full on-chain intelligence report — persona, risk score, trading patterns, and more.
               </p>
             </div>
+
             <SearchBar onSearch={handleSearch} loading={loading} />
+
             {/* Example wallets */}
-            <div className="mt-8 text-center">
-              <p className="text-xs text-gray-600 mb-2">Try an example:</p>
+            <div className="mt-10 text-center">
+              <p className="text-xs text-gray-400 mb-3 font-medium">Try an example:</p>
               <div className="flex flex-wrap gap-2 justify-center">
                 {[
-                  { label: "Vitalik", addr: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045" },
-                  { label: "CZ Binance", addr: "0x28C6c06298d514Db089934071355E5743bf21d60" },
-                  { label: "Base", addr: "0x4c80E281196C0F65E6A820D90600E0721aB7946c" },
+                  { label: "🟣 Vitalik", addr: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045" },
+                  { label: "🟡 CZ Binance", addr: "0x28C6c06298d514Db089934071355E5743bf21d60" },
+                  { label: "🔵 Base", addr: "0x4c80E281196C0F65E6A820D90600E0721aB7946c" },
                 ].map((ex) => (
                   <button
                     key={ex.label}
                     onClick={() => handleSearch(ex.addr)}
-                    className="text-xs text-purple-400 hover:text-purple-300 bg-purple-500/10 hover:bg-purple-500/20 px-3 py-1.5 rounded-full transition"
+                    className="text-sm text-indigo-600 hover:text-indigo-700 bg-white hover:bg-indigo-50 px-4 py-2 rounded-xl transition font-medium border border-indigo-100 hover:border-indigo-200 shadow-sm hover:shadow-md"
                   >
                     {ex.label}
                   </button>
                 ))}
               </div>
+            </div>
+
+            {/* Features */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-14 max-w-3xl w-full">
+              {[
+                { icon: <Zap className="w-5 h-5" />, label: "Degen Score", desc: "0-100 rating", color: "text-amber-500 bg-amber-50" },
+                { icon: <Shield className="w-5 h-5" />, label: "Risk Analysis", desc: "Auto insights", color: "text-emerald-500 bg-emerald-50" },
+                { icon: <BarChart3 className="w-5 h-5" />, label: "Activity Map", desc: "Hourly heatmap", color: "text-indigo-500 bg-indigo-50" },
+                { icon: <Activity className="w-5 h-5" />, label: "Persona", desc: "Wallet identity", color: "text-purple-500 bg-purple-50" },
+              ].map((f, i) => (
+                <div key={i} className="glass-card p-4 text-center glass-card-hover animate-fade-in" style={{ animationDelay: `${i * 0.1 + 0.3}s`, opacity: 0 }}>
+                  <div className={`w-10 h-10 rounded-xl ${f.color} flex items-center justify-center mx-auto mb-2`}>
+                    {f.icon}
+                  </div>
+                  <div className="text-sm font-semibold text-gray-700">{f.label}</div>
+                  <div className="text-xs text-gray-400">{f.desc}</div>
+                </div>
+              ))}
             </div>
           </div>
         )}
@@ -104,23 +131,27 @@ export default function Home() {
         {/* Loading */}
         {loading && (
           <div className="flex flex-col items-center justify-center min-h-[60vh]">
-            <div className="relative">
-              <div className="w-16 h-16 border-4 border-gray-800 border-t-purple-500 rounded-full animate-spin" />
+            <div className="relative mb-6">
+              <div className="w-16 h-16 border-4 border-indigo-100 border-t-indigo-500 rounded-full animate-spin" />
+              <div className="absolute inset-0 w-16 h-16 border-4 border-transparent border-b-purple-400 rounded-full animate-spin" style={{ animationDirection: "reverse", animationDuration: "1.5s" }} />
             </div>
-            <p className="text-gray-400 mt-4 text-sm">Analyzing wallet on-chain...</p>
-            <p className="text-gray-600 text-xs mt-1">Fetching balances, tokens, and transaction history</p>
+            <p className="text-gray-600 font-medium">Analyzing wallet on-chain...</p>
+            <p className="text-gray-400 text-sm mt-1">Fetching balances, tokens, and transaction history</p>
           </div>
         )}
 
         {/* Error */}
         {error && (
           <div className="flex flex-col items-center justify-center min-h-[40vh]">
-            <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-6 max-w-md text-center">
-              <p className="text-red-400 font-semibold mb-2">Analysis Failed</p>
-              <p className="text-gray-400 text-sm">{error}</p>
+            <div className="glass-card p-8 max-w-md text-center border-rose-100">
+              <div className="w-14 h-14 rounded-2xl bg-rose-50 flex items-center justify-center mx-auto mb-4">
+                <AlertTriangle className="w-7 h-7 text-rose-500" />
+              </div>
+              <p className="text-rose-600 font-bold text-lg mb-2">Analysis Failed</p>
+              <p className="text-gray-500 text-sm">{error}</p>
               <button
                 onClick={() => { setError(null); setProfile(null); }}
-                className="mt-4 text-sm text-purple-400 hover:text-purple-300 transition"
+                className="mt-5 text-sm text-indigo-600 hover:text-indigo-700 font-semibold bg-indigo-50 px-4 py-2 rounded-xl transition"
               >
                 Try again
               </button>
@@ -130,7 +161,7 @@ export default function Home() {
 
         {/* Profile Dashboard */}
         {profile && !loading && (
-          <div className="space-y-6">
+          <div className="space-y-5">
             {/* Search bar (persistent) */}
             <SearchBar onSearch={handleSearch} loading={loading} />
 
@@ -168,9 +199,11 @@ export default function Home() {
               <TxTimeline transactions={profile.transactions} />
             </div>
 
-            {/* Footer info */}
-            <div className="text-center text-xs text-gray-600 py-4">
-              Powered by Alchemy • Data from Ethereum mainnet • {profile.pattern.totalTransactions} transactions analyzed
+            {/* Footer */}
+            <div className="text-center text-xs text-gray-400 py-6">
+              <span className="bg-white/60 px-4 py-2 rounded-full border border-gray-100">
+                Powered by Alchemy • Ethereum mainnet • {profile.pattern.totalTransactions} transactions analyzed
+              </span>
             </div>
           </div>
         )}
