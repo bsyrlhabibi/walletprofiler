@@ -7,6 +7,7 @@ import ActivityHeatmap from "@/components/activity-heatmap";
 import TokenHoldings from "@/components/token-holdings";
 import TxTimeline from "@/components/tx-timeline";
 import TrustActivityPanel from "@/components/trust-activity-panel";
+import PortfolioPieChart from "@/components/portfolio-pie-chart";
 import { WalletProfile } from "@/lib/types";
 import { Sparkles, Zap, Shield, BarChart3, AlertTriangle, ArrowLeft, Wallet, Globe } from "lucide-react";
 
@@ -222,6 +223,10 @@ export default function Home() {
               totalValueUsd={profile.totalValueUsd}
               ethBalanceUsd={profile.ethBalanceUsd}
               explorerUrl={profile.explorerUrl}
+              ensName={profile.ensName}
+              walletLabel={profile.walletLabel}
+              walletType={profile.walletType}
+              walletTag={profile.walletTag}
             />
 
             {/* Grid: Heatmaps + Risk */}
@@ -240,6 +245,14 @@ export default function Home() {
               />
               <TrustActivityPanel pattern={profile.pattern} />
             </div>
+
+            {/* Portfolio Breakdown */}
+            {(profile as any).portfolioBreakdown && (
+              <PortfolioPieChart
+                slices={(profile as any).portfolioBreakdown}
+                totalValueUsd={profile.totalValueUsd}
+              />
+            )}
 
             {/* Grid: Tokens + Transactions */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
