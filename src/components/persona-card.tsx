@@ -3,12 +3,12 @@
 import { TradingPattern } from "@/lib/types";
 import { TrendingUp, Flame, Zap, Copy, Check, Layers, Link2 } from "lucide-react";
 
-const CHAIN_LABELS: Record<string, { name: string; icon: string; color: string }> = {
-  eth: { name: "Ethereum", icon: "⟠", color: "bg-indigo-100 text-indigo-700" },
-  polygon: { name: "Polygon", icon: "⬡", color: "bg-purple-100 text-purple-700" },
-  arbitrum: { name: "Arbitrum", icon: "🔵", color: "bg-blue-100 text-blue-700" },
-  optimism: { name: "Optimism", icon: "🔴", color: "bg-rose-100 text-rose-700" },
-  base: { name: "Base", icon: "🔷", color: "bg-sky-100 text-sky-700" },
+const CHAIN_LABELS: Record<string, { name: string; icon: string; color: string; currency: string }> = {
+  eth: { name: "Ethereum", icon: "⟠", color: "bg-indigo-100 text-indigo-700", currency: "ETH" },
+  polygon: { name: "Polygon", icon: "⬡", color: "bg-purple-100 text-purple-700", currency: "MATIC" },
+  arbitrum: { name: "Arbitrum", icon: "🔵", color: "bg-blue-100 text-blue-700", currency: "ETH" },
+  optimism: { name: "Optimism", icon: "🔴", color: "bg-rose-100 text-rose-700", currency: "ETH" },
+  base: { name: "Base", icon: "🔷", color: "bg-sky-100 text-sky-700", currency: "ETH" },
 };
 import { useState } from "react";
 
@@ -104,7 +104,7 @@ export default function PersonaCard({ pattern, address, ethBalance, totalTokens,
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <StatBox
             icon={<TrendingUp className="w-4 h-4 text-indigo-500" />}
-            label="Balance"
+            label={chain && CHAIN_LABELS[chain] ? `${CHAIN_LABELS[chain].currency} Balance` : "Balance"}
             value={ethBalance.toFixed(4)}
             sub={`${totalTokens} tokens`}
             color="indigo"
@@ -118,9 +118,9 @@ export default function PersonaCard({ pattern, address, ethBalance, totalTokens,
           />
           <StatBox
             icon={<Zap className="w-4 h-4 text-amber-500" />}
-            label="Volume"
-            value={`${pattern.totalVolume.toFixed(2)} Ξ`}
-            sub={`Avg ${pattern.avgTxValue.toFixed(4)} Ξ`}
+            label={chain && CHAIN_LABELS[chain] ? `${CHAIN_LABELS[chain].currency} Volume` : "Volume"}
+            value={`${pattern.totalVolume.toFixed(2)} ${chain && CHAIN_LABELS[chain] ? CHAIN_LABELS[chain].currency : "ETH"}`}
+            sub={`Avg ${pattern.avgTxValue.toFixed(4)} ${chain && CHAIN_LABELS[chain] ? CHAIN_LABELS[chain].currency : "ETH"}`}
             color="amber"
           />
           <StatBox

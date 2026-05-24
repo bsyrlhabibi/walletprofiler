@@ -5,9 +5,10 @@ import { ArrowDownLeft, ArrowUpRight, RefreshCw, ExternalLink, Clock } from "luc
 
 interface TxTimelineProps {
   transactions: Transaction[];
+  currency?: string;
 }
 
-export default function TxTimeline({ transactions }: TxTimelineProps) {
+export default function TxTimeline({ transactions, currency = "ETH" }: TxTimelineProps) {
   const displayTxs = transactions.slice(0, 20);
 
   const getIcon = (dir: string) => {
@@ -91,7 +92,7 @@ export default function TxTimeline({ transactions }: TxTimelineProps) {
             <div className="flex items-center gap-3">
               <div className="text-right">
                 <div className={`text-sm font-mono font-semibold ${getDirectionColor(tx.direction)}`}>
-                  {tx.direction === "in" ? "+" : "−"}{tx.valueFormatted.toFixed(4)} Ξ
+                  {tx.direction === "in" ? "+" : "−"}{tx.valueFormatted.toFixed(4)} {currency}
                 </div>
                 <div className="text-xs text-gray-400">{formatTime(tx.timestamp)}</div>
               </div>

@@ -28,6 +28,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentChain, setCurrentChain] = useState("eth");
+  const chainCurrency: Record<string, string> = { eth: "ETH", polygon: "MATIC", arbitrum: "ETH", optimism: "ETH", base: "ETH" };
 
   const handleSearch = async (address: string, chain: string = "eth") => {
     setLoading(true);
@@ -243,7 +244,7 @@ export default function Home() {
                 tokens={profile.tokenBalances}
                 ethBalance={profile.ethBalance}
               />
-              <TxTimeline transactions={profile.transactions} />
+              <TxTimeline transactions={profile.transactions} currency={chainCurrency[currentChain] || "ETH"} />
             </div>
 
             {/* Footer */}
