@@ -141,7 +141,7 @@ export default function Home() {
               <p className="text-xs text-gray-400 mb-3 font-medium">Try an example:</p>
               <div className="flex flex-wrap gap-2 justify-center">
                 {[
-                  { label: "🟣 My Wallet", addr: "0xEF98b44533d97C59171C9FC58F2e0E6d12a25204", chain: "eth" },
+                  { label: "🟣 Ethereum Wallet", addr: "0xEF98b44533d97C59171C9FC58F2e0E6d12a25204", chain: "eth" },
                   { label: "🔴 Arbitrum DAO", addr: "0xf7753A50B0C1f22235C0A1E4871830C60D7f132a", chain: "arbitrum" },
                   { label: "🔵 Base Wallet", addr: "0x4c80E281196C0F65E6A820D90600E0721aB7946c", chain: "base" },
                 ].map((ex) => (
