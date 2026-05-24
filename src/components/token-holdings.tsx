@@ -20,8 +20,15 @@ const CHAIN_NATIVE: Record<string, { name: string; symbol: string; icon: string;
 };
 
 export default function TokenHoldings({ tokens, ethBalance, chain, explorerUrl = "etherscan.io", nativePriceUsd }: TokenHoldingsProps) {
-  const displayTokens = tokens.slice(0, 15);
   const native = CHAIN_NATIVE[chain || "eth"] || CHAIN_NATIVE.eth;
+
+  // Filter: only tokens with USD value, sorted by value descending
+  const valuedTokens = tokens
+    .filter((t) => t.valueUsd && t.valueUsd > 0)
+    .sort((a, b) => (b.valueUsd || 0) - (a.valueUsd || 0))
+    .slice(0, 15);
+
+  const nativeUsd = nativePriceUsd && nativePriceUsd > 0 ? ethBalance * nativePriceUsd : null;
 
   return (
     <div className="glass-card p-4 animate-fade-in animate-fade-in-delay-2">
@@ -30,7 +37,9 @@ export default function TokenHoldings({ tokens, ethBalance, chain, explorerUrl =
           <Coins className="w-4 h-4 text-amber-500" />
           Token Holdings
         </h3>
-        <span className="text-xs text-gray-400 bg-amber-50 px-2 py-0.5 rounded-full">{tokens.length + 1} assets</span>
+        <span className="text-xs text-gray-400 bg-amber-50 px-2 py-0.5 rounded-full">
+          {valuedTokens.length + 1} assets
+        </span>
       </div>
 
       <div className="space-y-1.5">
@@ -45,18 +54,19 @@ export default function TokenHoldings({ tokens, ethBalance, chain, explorerUrl =
               <div className="text-xs text-gray-400">{native.symbol}</div>
             </div>
           </div>
-            <div className="text-right">
+          <div className="text-right">
             <div className="text-sm font-mono font-semibold text-gray-800">{ethBalance.toFixed(4)}</div>
-            {nativePriceUsd && nativePriceUsd > 0 && (
-              <div className="text-xs text-gray-400">${(ethBalance * nativePriceUsd).toFixed(2)}</div>
+            {nativeUsd !== null && (
+              <div className="text-xs font-semibold text-emerald-600">
+                ${nativeUsd.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </div>
             )}
           </div>
         </div>
 
-        {/* ERC-20 tokens */}
-        {displayTokens.map((token) => {
+        {/* ERC-20 tokens — only with USD value */}
+        {valuedTokens.map((token) => {
           const formatted = token.balanceFormatted;
-          if (formatted === 0) return null;
 
           const displayBalance = formatted > 1000000
             ? `${(formatted / 1000000).toFixed(2)}M`
@@ -81,14 +91,18 @@ export default function TokenHoldings({ tokens, ethBalance, chain, explorerUrl =
                 </div>
                 <div>
                   <div className="text-sm font-medium text-gray-700 truncate max-w-[120px]">{token.name}</div>
-                  <div className="text-xs text-gray-400">{token.symbol}</div>
+                  <div className="text-xs text-gray-400">{token.symbol} · {displayBalance}</div>
                 </div>
               </div>
               <div className="flex items-center gap-2">
                 <div className="text-right">
-                  <div className="text-sm font-mono text-gray-600">{displayBalance}</div>
-                  {token.valueUsd && token.valueUsd > 0 && (
-                    <div className="text-xs text-gray-400">${token.valueUsd.toFixed(2)}</div>
+                  <div className="text-sm font-bold text-gray-800">
+                    ${token.valueUsd!.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </div>
+                  {token.priceUsd && token.priceUsd > 0 && (
+                    <div className="text-[10px] text-gray-400">
+                      @${token.priceUsd >= 1 ? token.priceUsd.toFixed(2) : token.priceUsd.toFixed(6)}
+                    </div>
                   )}
                 </div>
                 <a
@@ -104,9 +118,9 @@ export default function TokenHoldings({ tokens, ethBalance, chain, explorerUrl =
           );
         })}
 
-        {displayTokens.length === 0 && (
+        {valuedTokens.length === 0 && (
           <div className="text-center text-gray-400 text-sm py-6">
-            No ERC-20 tokens found
+            No tokens with USD value found
           </div>
         )}
       </div>
