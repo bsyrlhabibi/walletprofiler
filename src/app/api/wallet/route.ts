@@ -1,78 +1,80 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAlchemy, AssetTransfersCategory, SortingOrder } from "@/lib/alchemy";
+import { getBalance, getAssetTransfers, getTokenBalances, getTokenMetadata, getBlock, isAlchemyConfigured } from "@/lib/alchemy";
 import { analyzeTransactions } from "@/lib/analysis";
 import { Transaction, TokenBalance, WalletProfile } from "@/lib/types";
-import { ethers } from "ethers";
+
+function isAddress(addr: string): boolean {
+  return /^0x[0-9a-fA-F]{40}$/.test(addr);
+}
 
 export async function GET(req: NextRequest) {
   try {
     const address = req.nextUrl.searchParams.get("address");
     const chain = req.nextUrl.searchParams.get("chain") || "eth";
 
-    if (!address || !ethers.isAddress(address)) {
+    if (!address || !isAddress(address)) {
       return NextResponse.json({ error: "Invalid Ethereum address" }, { status: 400 });
     }
 
-    const alchemy = getAlchemy(chain);
-    const categories = [
-      AssetTransfersCategory.EXTERNAL,
-      AssetTransfersCategory.ERC20,
-      AssetTransfersCategory.ERC721,
-      AssetTransfersCategory.ERC1155,
-    ];
-
-    // Parallel fetch
-    const [ethBalanceRaw, tokenBalancesRaw, transfersRaw, incomingRaw] = await Promise.all([
-      alchemy.core.getBalance(address),
-      alchemy.core.getTokensForOwner(address).catch(() => ({ tokens: [] })),
-      alchemy.core.getAssetTransfers({
-        fromAddress: address,
-        category: categories,
-        maxCount: 100,
-        order: SortingOrder.DESCENDING,
-      }).catch(() => ({ transfers: [] })),
-      alchemy.core.getAssetTransfers({
-        toAddress: address,
-        category: categories,
-        maxCount: 100,
-        order: SortingOrder.DESCENDING,
-      }).catch(() => ({ transfers: [] })),
-    ]);
-
-    const ethBalance = parseFloat(ethers.formatEther(ethBalanceRaw.toString()));
-
-    // Process token balances
-    const tokenBalances: TokenBalance[] = ((tokenBalancesRaw.tokens || []) as any[]).map((t: any) => ({
-      contractAddress: t.contractAddress as string,
-      name: (t.name as string) || "Unknown",
-      symbol: (t.symbol as string) || "???",
-      logo: t.logo as string | null,
-      balance: t.balance as string,
-      balanceFormatted: parseFloat((t.balance as string) || "0"),
-      decimals: (t.decimals as number) || 18,
-      priceUsd: null,
-      valueUsd: null,
-    }));
-
-    // Process transactions - deduplicate by hash
-    const allTransfers: any[] = [
-      ...((transfersRaw.transfers || []) as any[]),
-      ...((incomingRaw.transfers || []) as any[]),
-    ];
-
-    const seen = new Set<string>();
-    const uniqueTransfers = allTransfers.filter((t: Record<string, unknown>) => {
-      if (seen.has(t.hash as string)) return false;
-      seen.add(t.hash as string);
-      return true;
-    });
-
-    uniqueTransfers.sort((a: Record<string, unknown>, b: Record<string, unknown>) => {
-      return parseInt((b.blockNum as string) || "0", 16) - parseInt((a.blockNum as string) || "0", 16);
-    });
+    if (!isAlchemyConfigured()) {
+      return NextResponse.json({ error: "Alchemy API key not configured" }, { status: 500 });
+    }
 
     const addr = address.toLowerCase();
 
+    // Parallel fetch
+    const [ethBalanceHex, transfersOut, transfersIn, rawTokenBalances] = await Promise.all([
+      getBalance(address),
+      getAssetTransfers(address, undefined, 100),
+      getAssetTransfers(undefined, address, 100),
+      getTokenBalances(address),
+    ]);
+
+    const ethBalance = parseInt(ethBalanceHex, 16) / 1e18;
+
+    // Process token balances with metadata
+    const tokenBalances: TokenBalance[] = [];
+    for (const tb of rawTokenBalances) {
+      const rawBalance = parseInt(tb.tokenBalance || "0x0", 16);
+      if (rawBalance === 0) continue;
+
+      let meta: { name?: string; symbol?: string; logo?: string; decimals?: number } = {};
+      try {
+        meta = await getTokenMetadata(tb.contractAddress) || {};
+      } catch {
+        // skip
+      }
+
+      const decimals = meta.decimals || 18;
+      tokenBalances.push({
+        contractAddress: tb.contractAddress,
+        name: meta.name || "Unknown",
+        symbol: meta.symbol || "???",
+        logo: meta.logo || null,
+        balance: tb.tokenBalance,
+        balanceFormatted: rawBalance / Math.pow(10, decimals),
+        decimals,
+        priceUsd: null,
+        valueUsd: null,
+      });
+    }
+
+    // Deduplicate transfers by hash
+    const allTransfers = [...transfersOut, ...transfersIn];
+    const seen = new Set<string>();
+    const uniqueTransfers = allTransfers.filter((t: Record<string, unknown>) => {
+      const hash = t.hash as string;
+      if (!hash || seen.has(hash)) return false;
+      seen.add(hash);
+      return true;
+    });
+
+    // Sort by block number desc
+    uniqueTransfers.sort((a, b) => {
+      return parseInt((b.blockNum as string) || "0", 16) - parseInt((a.blockNum as string) || "0", 16);
+    });
+
+    // Build transactions
     const transactions: Transaction[] = uniqueTransfers.map((t: Record<string, unknown>) => {
       const value = parseFloat((t.value as string) || "0");
       const from = ((t.from as string) || "").toLowerCase();
@@ -98,18 +100,17 @@ export async function GET(req: NextRequest) {
       };
     });
 
-    // Get timestamps via block numbers
+    // Get timestamps for recent txs
     const blockNumSet = new Set<number>();
     for (const t of uniqueTransfers.slice(0, 20)) {
       const bn = parseInt((t.blockNum as string) || "0x0", 16);
       if (bn > 0) blockNumSet.add(bn);
     }
-    const blockNumbers = Array.from(blockNumSet);
 
     const blockTimestamps: Record<number, number> = {};
-    for (const blockNum of blockNumbers.slice(0, 10)) {
+    for (const blockNum of Array.from(blockNumSet).slice(0, 10)) {
       try {
-        const block = await alchemy.core.getBlock(blockNum);
+        const block = await getBlock(blockNum);
         if (block) blockTimestamps[blockNum] = block.timestamp;
       } catch {
         // skip
