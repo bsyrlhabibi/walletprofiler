@@ -140,13 +140,13 @@ export default function Home() {
               <p className="text-xs text-gray-400 mb-3 font-medium">Try an example:</p>
               <div className="flex flex-wrap gap-2 justify-center">
                 {[
-                  { label: "🟣 Vitalik Buterin", addr: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045" },
-                  { label: "🔴 Arbitrum DAO", addr: "0xf7753A50B0C1f22235C0A1E4871830C60D7f132a" },
-                  { label: "🔵 Base Wallet", addr: "0x4c80E281196C0F65E6A820D90600E0721aB7946c" },
+                  { label: "🟣 Vitalik Buterin", addr: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045", chain: "eth" },
+                  { label: "🔴 Arbitrum DAO", addr: "0xf7753A50B0C1f22235C0A1E4871830C60D7f132a", chain: "arbitrum" },
+                  { label: "🔵 Base Wallet", addr: "0x4c80E281196C0F65E6A820D90600E0721aB7946c", chain: "base" },
                 ].map((ex) => (
                   <button
                     key={ex.label}
-                    onClick={() => handleSearch(ex.addr)}
+                    onClick={() => handleSearch(ex.addr, ex.chain)}
                     className="text-sm text-fuchsia-600 hover:text-fuchsia-700 bg-white hover:bg-fuchsia-50 px-4 py-2 rounded-xl transition font-medium border border-fuchsia-100 hover:border-fuchsia-200 shadow-sm hover:shadow-md"
                   >
                     {ex.label}
