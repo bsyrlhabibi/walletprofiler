@@ -1,18 +1,12 @@
 "use client";
 
-import { TradingPattern } from "@/lib/types";
+import { useState } from "react";
+import type { TradingPattern } from "@/types/wallet";
+import { CHAIN_LABELS } from "@/constants/chains";
+import type { ChainId } from "@/constants/chains";
 import { TrendingUp, Flame, Zap, Copy, Check, Layers, Link2, ExternalLink, Tag } from "lucide-react";
 
-const CHAIN_LABELS: Record<string, { name: string; icon: string; color: string; currency: string }> = {
-  eth: { name: "Ethereum", icon: "⟠", color: "bg-indigo-100 text-indigo-700", currency: "ETH" },
-  polygon: { name: "Polygon", icon: "⬡", color: "bg-purple-100 text-purple-700", currency: "MATIC" },
-  arbitrum: { name: "Arbitrum", icon: "🔵", color: "bg-blue-100 text-blue-700", currency: "ETH" },
-  optimism: { name: "Optimism", icon: "🔴", color: "bg-rose-100 text-rose-700", currency: "ETH" },
-  base: { name: "Base", icon: "🔷", color: "bg-sky-100 text-sky-700", currency: "ETH" },
-  bnb: { name: "BNB Chain", icon: "🟡", color: "bg-yellow-100 text-yellow-700", currency: "BNB" },
-};
-import { useState } from "react";
-
+/** Props for the PersonaCard component. */
 interface PersonaCardProps {
   pattern: TradingPattern;
   address: string;
@@ -27,6 +21,10 @@ interface PersonaCardProps {
   walletTag?: string | null;
 }
 
+/**
+ * Main persona card showing wallet identity, activity score, balance,
+ * and key stats. Includes address bar with copy/explorer links.
+ */
 export default function PersonaCard({ pattern, address, ethBalance, totalTokens, chain, totalValueUsd, ethBalanceUsd, explorerUrl, walletLabel, walletType, walletTag }: PersonaCardProps) {
   const [copied, setCopied] = useState(false);
 
@@ -73,11 +71,11 @@ export default function PersonaCard({ pattern, address, ethBalance, totalTokens,
         </div>
 
         {/* Chain badge + Address bar */}
-        {chain && CHAIN_LABELS[chain] && (
+        {chain && CHAIN_LABELS[chain as ChainId] && (
           <div className="flex items-center gap-2 mb-3">
-            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${CHAIN_LABELS[chain].color}`}>
+            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${CHAIN_LABELS[chain as ChainId].color}`}>
               <Link2 className="w-3 h-3" />
-              {CHAIN_LABELS[chain].icon} {CHAIN_LABELS[chain].name} Network
+              {CHAIN_LABELS[chain as ChainId].icon} {CHAIN_LABELS[chain as ChainId].name} Network
             </span>
           </div>
         )}
@@ -163,7 +161,7 @@ export default function PersonaCard({ pattern, address, ethBalance, totalTokens,
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
           <StatBox
             icon={<TrendingUp className="w-4 h-4 text-indigo-500" />}
-            label={chain && CHAIN_LABELS[chain] ? `${CHAIN_LABELS[chain].currency} Balance` : "Balance"}
+            label={chain && CHAIN_LABELS[chain as ChainId] ? `${CHAIN_LABELS[chain as ChainId].currency} Balance` : "Balance"}
             value={ethBalance.toFixed(4)}
             sub={`${totalTokens} tokens`}
             color="indigo"
@@ -177,9 +175,9 @@ export default function PersonaCard({ pattern, address, ethBalance, totalTokens,
           />
           <StatBox
             icon={<Zap className="w-4 h-4 text-amber-500" />}
-            label={chain && CHAIN_LABELS[chain] ? `${CHAIN_LABELS[chain].currency} Volume` : "Volume"}
-            value={`${pattern.totalVolume.toFixed(2)} ${chain && CHAIN_LABELS[chain] ? CHAIN_LABELS[chain].currency : "ETH"}`}
-            sub={`Avg ${pattern.avgTxValue.toFixed(4)} ${chain && CHAIN_LABELS[chain] ? CHAIN_LABELS[chain].currency : "ETH"}`}
+            label={chain && CHAIN_LABELS[chain as ChainId] ? `${CHAIN_LABELS[chain as ChainId].currency} Volume` : "Volume"}
+            value={`${pattern.totalVolume.toFixed(2)} ${chain && CHAIN_LABELS[chain as ChainId] ? CHAIN_LABELS[chain as ChainId].currency : "ETH"}`}
+            sub={`Avg ${pattern.avgTxValue.toFixed(4)} ${chain && CHAIN_LABELS[chain as ChainId] ? CHAIN_LABELS[chain as ChainId].currency : "ETH"}`}
             color="amber"
           />
           <StatBox
@@ -195,6 +193,7 @@ export default function PersonaCard({ pattern, address, ethBalance, totalTokens,
   );
 }
 
+/** Small stat box used in the persona card stats grid. */
 function StatBox({ icon, label, value, sub, color }: {
   icon: React.ReactNode;
   label: string;

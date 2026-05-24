@@ -1,5 +1,10 @@
-// Static logo URLs for popular tokens (CoinGecko CDN)
-// Fallback when Alchemy doesn't return a logo
+/**
+ * Static token logo URL mappings for popular tokens.
+ * Used as a fallback when Alchemy doesn't return a logo URL.
+ * @module lib/token-logos
+ */
+
+/** Map of token symbols to CoinGecko CDN logo URLs. */
 export const TOKEN_LOGOS: Record<string, string> = {
   // Major L1s
   ETH: "https://assets.coingecko.com/coins/images/279/small/ethereum.png",
@@ -62,7 +67,7 @@ export const TOKEN_LOGOS: Record<string, string> = {
   RDNT: "https://assets.coingecko.com/coins/images/26536/small/RadiantCapitalLogo.jpg",
 };
 
-// Chain native token logos
+/** Chain-native token logo URLs. */
 export const CHAIN_NATIVE_LOGOS: Record<string, string> = {
   eth: "https://assets.coingecko.com/coins/images/279/small/ethereum.png",
   polygon: "https://assets.coingecko.com/coins/images/4713/small/polygon.png",
@@ -72,8 +77,13 @@ export const CHAIN_NATIVE_LOGOS: Record<string, string> = {
   bnb: "https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png",
 };
 
+/**
+ * Get the logo URL for a token, preferring Alchemy's URL over static mapping.
+ * @param symbol - Token ticker symbol
+ * @param alchemyLogo - Logo URL from Alchemy's token metadata (takes priority)
+ * @returns Logo URL string, or null if no logo is available
+ */
 export function getTokenLogo(symbol: string, alchemyLogo?: string | null): string | null {
-  // Priority: Alchemy logo > static mapping
   if (alchemyLogo) return alchemyLogo;
   return TOKEN_LOGOS[symbol.toUpperCase()] || null;
 }

@@ -1,12 +1,17 @@
 "use client";
 
-import { TradingPattern } from "@/lib/types";
+import type { TradingPattern } from "@/types/wallet";
 import { Shield, TrendingUp, CheckCircle, AlertTriangle, Info, Zap, Activity } from "lucide-react";
 
+/** Props for the TrustActivityPanel component. */
 interface TrustActivityPanelProps {
   pattern: TradingPattern;
 }
 
+/**
+ * Panel displaying trust score, activity score, and their contributing factors.
+ * Shows gradient bars and categorized factor lists for both scores.
+ */
 export default function TrustActivityPanel({ pattern }: TrustActivityPanelProps) {
   const trustConfig: Record<string, { color: string; bg: string; icon: typeof Shield; label: string; emoji: string }> = {
     Trusted: { color: "text-emerald-600", bg: "bg-emerald-50 border-emerald-200", icon: CheckCircle, label: "Trusted", emoji: "✅" },
@@ -26,7 +31,6 @@ export default function TrustActivityPanel({ pattern }: TrustActivityPanelProps)
       if (score >= 40) return "from-amber-400 to-orange-500";
       return "from-rose-400 to-red-500";
     }
-    // activity
     if (score >= 80) return "from-fuchsia-400 to-purple-500";
     if (score >= 60) return "from-indigo-400 to-blue-500";
     if (score >= 40) return "from-cyan-400 to-teal-500";
@@ -62,7 +66,6 @@ export default function TrustActivityPanel({ pattern }: TrustActivityPanelProps)
           <span>Quiet</span>
           <span>Hyperactive</span>
         </div>
-        {/* Activity factors */}
         <div className="space-y-1">
           {pattern.activityFactors.slice(0, 3).map((f, i) => (
             <div key={i} className="flex items-start gap-2 bg-fuchsia-50/50 rounded-lg px-3 py-1.5">
@@ -102,7 +105,6 @@ export default function TrustActivityPanel({ pattern }: TrustActivityPanelProps)
           <span>Risky</span>
           <span>Fully Trusted</span>
         </div>
-        {/* Trust factors */}
         <div className="space-y-1">
           {pattern.trustFactors.map((f, i) => {
             const isNegative = f.toLowerCase().includes("high failure") ||

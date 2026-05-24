@@ -1,9 +1,12 @@
 "use client";
 
-import { TokenBalance } from "@/lib/types";
+import type { TokenBalance } from "@/types/wallet";
+import { CHAIN_NATIVE } from "@/constants/chains";
+import type { ChainId } from "@/constants/chains";
 import { CHAIN_NATIVE_LOGOS } from "@/lib/token-logos";
 import { Coins, ExternalLink, Gem } from "lucide-react";
 
+/** Props for the TokenHoldings component. */
 interface TokenHoldingsProps {
   tokens: TokenBalance[];
   ethBalance: number;
@@ -12,19 +15,14 @@ interface TokenHoldingsProps {
   nativePriceUsd?: number;
 }
 
-const CHAIN_NATIVE: Record<string, { name: string; symbol: string; icon: string; color: string }> = {
-  eth: { name: "Ethereum", symbol: "ETH", icon: "Ξ", color: "from-blue-400 to-indigo-500" },
-  polygon: { name: "Polygon", symbol: "MATIC", icon: "⬡", color: "from-purple-400 to-violet-500" },
-  arbitrum: { name: "Arbitrum", symbol: "ETH", icon: "🔵", color: "from-blue-400 to-sky-500" },
-  optimism: { name: "Optimism", symbol: "ETH", icon: "🔴", color: "from-rose-400 to-red-500" },
-  base: { name: "Base", symbol: "ETH", icon: "🔷", color: "from-sky-400 to-cyan-500" },
-  bnb: { name: "BNB Chain", symbol: "BNB", icon: "🟡", color: "from-yellow-400 to-amber-500" },
-};
-
+/**
+ * Displays the wallet's native token and ERC-20 holdings with USD values.
+ * Tokens are sorted by USD value (highest first), with the native token
+ * pinned at the top.
+ */
 export default function TokenHoldings({ tokens, ethBalance, chain, explorerUrl = "etherscan.io", nativePriceUsd }: TokenHoldingsProps) {
-  const native = CHAIN_NATIVE[chain || "eth"] || CHAIN_NATIVE.eth;
+  const native = CHAIN_NATIVE[(chain || "eth") as ChainId] || CHAIN_NATIVE.eth;
 
-  // Sort: tokens with USD value first (desc), then those without
   const sortedTokens = [...tokens].sort((a, b) => {
     const aVal = a.valueUsd || 0;
     const bVal = b.valueUsd || 0;
@@ -70,7 +68,7 @@ export default function TokenHoldings({ tokens, ethBalance, chain, explorerUrl =
           </div>
         </div>
 
-        {/* ERC-20 tokens — all tokens */}
+        {/* ERC-20 tokens */}
         {sortedTokens.map((token) => {
           const formatted = token.balanceFormatted;
 
@@ -85,7 +83,7 @@ export default function TokenHoldings({ tokens, ethBalance, chain, explorerUrl =
           return (
             <div
               key={token.contractAddress}
-              className="flex items-center justify-between py-2 px-2.5 sm:py-2.5 sm:px-3 rounded-xl border border-gray-100 bg-white hover:border-gray-200 hover:bg-gray-50 transition group" 
+              className="flex items-center justify-between py-2 px-2.5 sm:py-2.5 sm:px-3 rounded-xl border border-gray-100 bg-white hover:border-gray-200 hover:bg-gray-50 transition group"
             >
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-xs overflow-hidden shadow-sm">

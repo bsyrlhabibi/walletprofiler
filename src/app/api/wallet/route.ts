@@ -10,6 +10,7 @@ import { buildPortfolioBreakdown } from "@/lib/token-categories";
 import { getTokenLogo } from "@/lib/token-logos";
 import { Transaction, TokenBalance, WalletProfile } from "@/lib/types";
 
+
 function isAddress(addr: string): boolean {
   return /^0x[0-9a-fA-F]{40}$/.test(addr);
 }
@@ -162,7 +163,7 @@ export async function GET(req: NextRequest) {
         hash: t.hash,
         from: (t.from || "").toLowerCase(),
         to: (t.to || "").toLowerCase(),
-        value: parseFloat(String(t.value || "0")),
+        value: Number(t.value) || 0,
         asset: t.asset || "???",
         category: t.category || "external",
         blockNum: t.blockNum || "0x0",
@@ -302,16 +303,16 @@ export async function GET(req: NextRequest) {
     }
 
     // ETH-only volume
-    const ethTransfers: any[] = [...(ethOnlyOut || []), ...(ethOnlyIn || [])];
+    const ethTransfers: RawTransfer[] = [...(ethOnlyOut || []), ...(ethOnlyIn || [])];
     const ethSeen = new Set<string>();
-    const uniqueEthTransfers = ethTransfers.filter((t: any) => {
+    const uniqueEthTransfers = ethTransfers.filter((t: RawTransfer) => {
       if (!t.hash || ethSeen.has(t.hash)) return false;
       ethSeen.add(t.hash);
       return true;
     });
 
     let ethVolume = 0;
-    for (const t of uniqueEthTransfers) ethVolume += parseFloat(t.value || "0");
+    for (const t of uniqueEthTransfers) ethVolume += Number(t.value) || 0;
 
     // Get timestamps
     const blockNumSet = new Set<number>();
@@ -346,7 +347,7 @@ export async function GET(req: NextRequest) {
       ? +(ethVolume / uniqueEthTransfers.length).toFixed(6)
       : 0;
 
-    const profile: WalletProfile & { portfolioBreakdown?: any } = {
+    const profile: WalletProfile & { portfolioBreakdown?: typeof portfolioBreakdown } = {
       address: addr,
       walletLabel: knownWallet?.name || null,
       walletType: knownWallet?.type || null,

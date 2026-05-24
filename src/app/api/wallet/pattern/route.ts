@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAssetTransfers, getTokenBalances, getBlock, isAlchemyConfigured, getSupportedChains, getChainCurrency } from "@/lib/alchemy";
 import { analyzeTransactions } from "@/lib/analysis";
 import { Transaction, TokenBalance } from "@/lib/types";
+import type { RawTransfer } from "@/types/wallet";
 
 function isAddress(addr: string): boolean {
   return /^0x[0-9a-fA-F]{40}$/.test(addr);
@@ -32,20 +33,20 @@ export async function GET(req: NextRequest) {
       getTokenBalances(address, chain).catch(() => []),
     ]);
 
-    const allTransfers: any[] = [...(outgoing || []), ...(incoming || [])];
+    const allTransfers: RawTransfer[] = [...(outgoing || []), ...(incoming || [])];
     const seen = new Set<string>();
-    const unique = allTransfers.filter((t: any) => {
+    const unique = allTransfers.filter((t: RawTransfer) => {
       if (!t.hash || seen.has(t.hash)) return false;
       seen.add(t.hash);
       return true;
     });
 
-    unique.sort((a: any, b: any) =>
+    unique.sort((a: RawTransfer, b: RawTransfer) =>
       parseInt(b.blockNum || "0", 16) - parseInt(a.blockNum || "0", 16)
     );
 
-    const transactions: Transaction[] = unique.map((t: any) => {
-      const value = parseFloat(t.value || "0");
+    const transactions: Transaction[] = unique.map((t: RawTransfer) => {
+      const value = Number(t.value) || 0;
       const from = (t.from || "").toLowerCase();
       const to = (t.to || "").toLowerCase();
       let direction: "in" | "out" | "self" = "out";
@@ -89,8 +90,8 @@ export async function GET(req: NextRequest) {
     }
 
     const tokenBalances: TokenBalance[] = rawTokenBalances
-      .filter((tb: any) => parseInt(tb.tokenBalance || "0x0", 16) > 0)
-      .map((tb: any) => {
+      .filter((tb: { contractAddress: string; tokenBalance: string }) => parseInt(tb.tokenBalance || "0x0", 16) > 0)
+      .map((tb: { contractAddress: string; tokenBalance: string }) => {
         const raw = parseInt(tb.tokenBalance || "0x0", 16);
         return {
           contractAddress: tb.contractAddress,
@@ -103,15 +104,15 @@ export async function GET(req: NextRequest) {
 
     const pattern = analyzeTransactions(transactions, tokenBalances);
 
-    const ethTransfers: any[] = [...(ethOnlyOut || []), ...(ethOnlyIn || [])];
+    const ethTransfers: RawTransfer[] = [...(ethOnlyOut || []), ...(ethOnlyIn || [])];
     const ethSeen = new Set<string>();
-    const uniqueEth = ethTransfers.filter((t: any) => {
+    const uniqueEth = ethTransfers.filter((t: RawTransfer) => {
       if (!t.hash || ethSeen.has(t.hash)) return false;
       ethSeen.add(t.hash);
       return true;
     });
     let ethVolume = 0;
-    for (const t of uniqueEth) ethVolume += parseFloat(t.value || "0");
+    for (const t of uniqueEth) ethVolume += Number(t.value) || 0;
     pattern.totalVolume = +ethVolume.toFixed(4);
     pattern.avgTxValue = uniqueEth.length > 0 ? +(ethVolume / uniqueEth.length).toFixed(6) : 0;
 

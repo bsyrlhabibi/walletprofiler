@@ -1,12 +1,17 @@
-// Known wallet labels — well-known addresses across supported chains
-// Type: individual | exchange | protocol | dao | whale | bot
+/**
+ * Known wallet database for labeling well-known addresses.
+ * Covers individuals, exchanges, protocols, DAOs, and bots.
+ * @module lib/known-wallets
+ */
 
+/** Metadata for a known wallet address. */
 export interface KnownWallet {
   name: string;
   type: "individual" | "exchange" | "protocol" | "dao" | "whale" | "bot";
   tag?: string;
 }
 
+/** Map of lowercase addresses to known wallet metadata. */
 const KNOWN_WALLETS: Record<string, KnownWallet> = {
   // === Individuals ===
   "0xd8da6bf26964af9d7eed9e03e53415d37aa96045": { name: "Vitalik Buterin", type: "individual", tag: "ETH Co-Founder" },
@@ -76,14 +81,29 @@ const KNOWN_WALLETS: Record<string, KnownWallet> = {
   "0x34d85c9cdeb23fa97cb08333b511ac86e1c4e258": { name: "Otherdeed", type: "protocol", tag: "NFT" },
 };
 
+/**
+ * Look up a known wallet label by address.
+ * @param address - Hex wallet address (case-insensitive)
+ * @returns KnownWallet metadata or null if not recognized
+ */
 export function getKnownWalletLabel(address: string): KnownWallet | null {
   return KNOWN_WALLETS[address.toLowerCase()] || null;
 }
 
+/**
+ * Check if an address is a known exchange.
+ * @param address - Hex wallet address
+ * @returns True if the address belongs to a known exchange
+ */
 export function isKnownExchange(address: string): boolean {
   return getKnownWalletLabel(address)?.type === "exchange";
 }
 
+/**
+ * Check if an address is a known DeFi protocol.
+ * @param address - Hex wallet address
+ * @returns True if the address belongs to a known protocol
+ */
 export function isKnownProtocol(address: string): boolean {
   return getKnownWalletLabel(address)?.type === "protocol";
 }

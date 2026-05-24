@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import SearchBar from "@/components/search-bar";
 import ChainTabs from "@/components/chain-tabs";
 import PersonaCard from "@/components/persona-card";
@@ -9,11 +9,15 @@ import TokenHoldings from "@/components/token-holdings";
 import TxTimeline from "@/components/tx-timeline";
 import TrustActivityPanel from "@/components/trust-activity-panel";
 import PortfolioPieChart from "@/components/portfolio-pie-chart";
-import { WalletProfile } from "@/lib/types";
+import { useWalletProfile } from "@/hooks/use-wallet-profile";
+import { useChainState } from "@/hooks/use-chain-state";
+import { CHAIN_CURRENCY } from "@/constants/chains";
+import type { ChainId } from "@/constants/chains";
 import { Sparkles, Zap, Shield, BarChart3, AlertTriangle, ArrowLeft, Wallet } from "lucide-react";
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
+/** Wallet logo icon used in the header and hero section. */
 function WalletLogo({ size = 32 }: { size?: number }) {
   return (
     <div
@@ -26,89 +30,12 @@ function WalletLogo({ size = 32 }: { size?: number }) {
 }
 
 export default function Home() {
-  const [profile, setProfile] = useState<WalletProfile | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [currentChain, setCurrentChain] = useState("eth");
-  const [analyzedChain, setAnalyzedChain] = useState("eth");
-  const [analyzedAddress, setAnalyzedAddress] = useState<string | null>(null);
-  const chainCurrency: Record<string, string> = { eth: "ETH", polygon: "MATIC", arbitrum: "ETH", optimism: "ETH", base: "ETH" };
-  const cacheRef = useRef<Map<string, WalletProfile>>(new Map());
-  // Go to home state
-  const goHome = () => {
-    setProfile(null);
-    setError(null);
-    setLoading(false);
-    setAnalyzedAddress(null);
-  };
+  const {
+    profile, loading, error, analyzedChain, analyzedAddress,
+    handleSearch, handleChainSwitch, goHome,
+  } = useWalletProfile();
 
-  // Core fetch — no history manipulation
-  const fetchWallet = async (address: string, chain: string) => {
-    setLoading(true);
-    setError(null);
-    setProfile(null);
-    setCurrentChain(chain);
-    setAnalyzedChain(chain);
-    setAnalyzedAddress(address);
-
-    try {
-      const res = await fetch(`/api/wallet?address=${address}&chain=${chain}`);
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || `HTTP ${res.status}`);
-      }
-      const data: WalletProfile = await res.json();
-      setProfile(data);
-      cacheRef.current.set(`${address}-${chain}`, data);
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Failed to analyze wallet";
-      setError(msg);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // User-initiated search — push history + fetch
-  const handleSearch = async (address: string, chain: string = "eth") => {
-    history.pushState({ address, chain }, "", `/?address=${address}&chain=${chain}`);
-    await fetchWallet(address, chain);
-  };
-
-  // Handle browser back/forward buttons
-  useEffect(() => {
-    const onPopState = (e: PopStateEvent) => {
-      if (e.state?.address) {
-        // Forward/redo — restore from cache or fetch
-        const key = `${e.state.address}-${e.state.chain || "eth"}`;
-        const cached = cacheRef.current.get(key);
-        if (cached) {
-          setProfile(cached);
-          setAnalyzedChain(e.state.chain || "eth");
-          setAnalyzedAddress(e.state.address);
-          setCurrentChain(e.state.chain || "eth");
-          setError(null);
-          setLoading(false);
-        } else {
-          fetchWallet(e.state.address, e.state.chain || "eth");
-        }
-      } else {
-        // Back — return to home
-        goHome();
-      }
-    };
-    window.addEventListener("popstate", onPopState);
-    return () => window.removeEventListener("popstate", onPopState);
-  }, []);
-
-  // Switch chain and auto-re-analyze same address
-  const handleChainSwitch = (chain: string) => {
-    if (chain === analyzedChain) return;
-    if (analyzedAddress) {
-      handleSearch(analyzedAddress, chain);
-    } else {
-      setCurrentChain(chain);
-    }
-  };
+  const { currentChain, setCurrentChain } = useChainState("eth");
 
   return (
     <div className="min-h-screen">
@@ -184,7 +111,6 @@ export default function Home() {
         {/* Hero / Search */}
         {!profile && !loading && (
           <div className="flex flex-col items-center justify-center min-h-[65vh]">
-            {/* Hero */}
             <div className="text-center mb-10">
               <div className="flex items-center justify-center gap-3 mb-5">
                 <WalletLogo size={56} />
@@ -197,10 +123,8 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Search with chain dropdown */}
             <SearchBar onSearch={handleSearch} loading={loading} chain={currentChain} onChainChange={setCurrentChain} showChainSelector={true} />
 
-            {/* Example wallets */}
             <div className="mt-10 text-center">
               <p className="text-xs text-gray-400 mb-3 font-medium">Try an example:</p>
               <div className="flex flex-wrap gap-2 justify-center">
@@ -220,7 +144,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Features */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-14 max-w-3xl w-full">
               {[
                 { icon: <Zap className="w-5 h-5" />, label: "Degen Score", desc: "0-100 rating", color: "text-amber-500 bg-amber-50" },
@@ -274,7 +197,6 @@ export default function Home() {
         {/* Profile Dashboard */}
         {profile && !loading && (
           <div className="space-y-5">
-            {/* Search bar (no dropdown) + Chain tabs */}
             <div className="space-y-4 pt-2">
               <SearchBar onSearch={handleSearch} loading={loading} chain={analyzedChain} showChainSelector={false} />
               <div className="pt-1">
@@ -282,7 +204,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Persona Card */}
             <PersonaCard
               pattern={profile.pattern}
               address={profile.address}
@@ -297,7 +218,6 @@ export default function Home() {
               walletTag={profile.walletTag}
             />
 
-            {/* Grid: Heatmaps + Risk */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
               <ActivityHeatmap
                 data={profile.pattern.activityByHour}
@@ -314,15 +234,13 @@ export default function Home() {
               <TrustActivityPanel pattern={profile.pattern} />
             </div>
 
-            {/* Portfolio Breakdown */}
-            {(profile as any).portfolioBreakdown && (
+            {profile.portfolioBreakdown && (
               <PortfolioPieChart
-                slices={(profile as any).portfolioBreakdown}
+                slices={profile.portfolioBreakdown}
                 totalValueUsd={profile.totalValueUsd}
               />
             )}
 
-            {/* Grid: Tokens + Transactions */}
             <div className="grid grid-cols-1 lg:grid-cols-[2fr_3fr] gap-4 items-start">
               <TokenHoldings
                 tokens={profile.tokenBalances}
@@ -331,26 +249,26 @@ export default function Home() {
                 explorerUrl={profile.explorerUrl}
                 nativePriceUsd={profile.ethBalanceUsd / profile.ethBalance || 0}
               />
-              <TxTimeline transactions={profile.transactions} currency={chainCurrency[analyzedChain] || "ETH"} explorerUrl={profile.explorerUrl} />
+              <TxTimeline transactions={profile.transactions} currency={CHAIN_CURRENCY[(analyzedChain as ChainId)] || "ETH"} explorerUrl={profile.explorerUrl} />
             </div>
-
           </div>
         )}
-          {/* Universal Footer */}
-          <footer className="border-t border-gray-200 mt-6 py-8 space-y-3">
-            <div className="flex items-center justify-center gap-2 text-xs text-gray-400">
-              <span className="bg-white/60 px-4 py-2 rounded-full border border-gray-100">
-                Powered by Alchemy{profile ? ` • ${analyzedChain === "eth" ? "Ethereum" : analyzedChain === "polygon" ? "Polygon" : analyzedChain === "arbitrum" ? "Arbitrum" : analyzedChain === "optimism" ? "Optimism" : analyzedChain === "bnb" ? "BNB Chain" : "Base"} mainnet • ${profile.pattern.totalTransactions} transactions analyzed` : " • On-Chain Intelligence"}
-              </span>
-            </div>
-            <div className="flex items-center justify-center gap-2">
-              <span className="text-sm">🐉</span>
-              <span className="text-xs font-medium text-gray-400 tracking-wide">
-                Built by <span className="font-bold bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 bg-clip-text text-transparent">KOIDRAGON</span> — <span className="text-gray-500">Hermes Agent</span>
-              </span>
-              <span className="text-sm">🐉</span>
-            </div>
-          </footer>
+
+        {/* Universal Footer */}
+        <footer className="border-t border-gray-200 mt-6 py-8 space-y-3">
+          <div className="flex items-center justify-center gap-2 text-xs text-gray-400">
+            <span className="bg-white/60 px-4 py-2 rounded-full border border-gray-100">
+              Powered by Alchemy{profile ? ` • ${analyzedChain === "eth" ? "Ethereum" : analyzedChain === "polygon" ? "Polygon" : analyzedChain === "arbitrum" ? "Arbitrum" : analyzedChain === "optimism" ? "Optimism" : analyzedChain === "bnb" ? "BNB Chain" : "Base"} mainnet • ${profile.pattern.totalTransactions} transactions analyzed` : " • On-Chain Intelligence"}
+            </span>
+          </div>
+          <div className="flex items-center justify-center gap-2">
+            <span className="text-sm">🐉</span>
+            <span className="text-xs font-medium text-gray-400 tracking-wide">
+              Built by <span className="font-bold bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 bg-clip-text text-transparent">KOIDRAGON</span> — <span className="text-gray-500">Hermes Agent</span>
+            </span>
+            <span className="text-sm">🐉</span>
+          </div>
+        </footer>
       </main>
     </div>
   );

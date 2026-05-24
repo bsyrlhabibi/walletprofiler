@@ -1,13 +1,22 @@
-// Token categorization for portfolio breakdown
+/**
+ * Token categorization and portfolio breakdown utilities.
+ * Classifies tokens into categories (stablecoin, DeFi, L2, etc.)
+ * and builds portfolio pie chart data.
+ * @module lib/token-categories
+ */
+
+import type { PortfolioSlice } from "@/types/wallet";
 
 export type TokenCategory = "stablecoin" | "defi" | "l2" | "meme" | "wrapped" | "governance" | "nft" | "other";
 
+/** Display metadata for a token category. */
 export interface CategoryInfo {
   label: string;
   color: string;
   emoji: string;
 }
 
+/** Category display configuration (label, color, emoji). */
 export const CATEGORY_MAP: Record<TokenCategory, CategoryInfo> = {
   stablecoin: { label: "Stablecoins", color: "#10b981", emoji: "💵" },
   defi:       { label: "DeFi", color: "#8b5cf6", emoji: "🏦" },
@@ -19,13 +28,11 @@ export const CATEGORY_MAP: Record<TokenCategory, CategoryInfo> = {
   other:      { label: "Other", color: "#9ca3af", emoji: "📦" },
 };
 
-// Stablecoins
 const STABLECOINS = new Set([
   "USDC", "USDT", "DAI", "BUSD", "TUSD", "USDP", "FRAX", "LUSD", "sUSD",
   "GUSD", "USDD", "CUSD", "MIM", "DOLA", "ALUSD", "agEUR", "EURC",
 ]);
 
-// DeFi tokens
 const DEFI_TOKENS = new Set([
   "UNI", "AAVE", "COMP", "MKR", "SNX", "CRV", "LDO", "RPL", "SUSHI",
   "YFI", "BAL", "1INCH", "DYDX", "GMX", "PENDLE", "EIGEN", "ENA",
@@ -33,41 +40,36 @@ const DEFI_TOKENS = new Set([
   "JOE", "VELO", "AERO", "GRAIL", "CAMELOT",
 ]);
 
-// Layer 2 tokens
-const L2_TOKENS = new Set([
-  "ARB", "OP", "MATIC", "IMX", "METIS", "BOBA", "LRC",
-]);
+const L2_TOKENS = new Set(["ARB", "OP", "MATIC", "IMX", "METIS", "BOBA", "LRC"]);
 
-// Meme coins
 const MEME_TOKENS = new Set([
   "PEPE", "SHIB", "DOGE", "FLOKI", "WIF", "BONK", "BRETT", "DEGEN",
   "TOSHI", "MOG", "TURBO", "LADYS", "LUNC", "ELON", "AKITA",
 ]);
 
-// Wrapped tokens
 const WRAPPED_TOKENS = new Set([
   "WETH", "WBTC", "WMATIC", "WBNB", "WAVAX", "WSOL", "stETH", "rETH",
   "cbETH", "sfrxETH", "weETH",
 ]);
 
-// Governance tokens
 const GOVERNANCE_TOKENS = new Set([
   "ENS", "UNI", "AAVE", "COMP", "MKR", "DYDX", "RPL", "BAL",
   "SNX", "YFI", "SUSHI", "1INCH", "BLUR", "LOOKS",
 ]);
 
-// NFT-related tokens
 const NFT_TOKENS = new Set([
   "APE", "BLUR", "LOOKS", "SAND", "MANA", "AXS", "GALA", "ILV",
   "RNDR", "RARI", "SUDO", "X2Y2",
 ]);
 
 /**
- * Categorize a token by its symbol
+ * Categorize a token by its symbol into one of the predefined categories.
+ * Priority: stablecoin > meme > wrapped > l2 > nft > defi > governance > other.
+ * @param symbol - Token ticker symbol
+ * @returns The TokenCategory classification
  */
 export function categorizeToken(symbol: string): TokenCategory {
   const upper = symbol.toUpperCase();
-
   if (STABLECOINS.has(upper)) return "stablecoin";
   if (MEME_TOKENS.has(upper)) return "meme";
   if (WRAPPED_TOKENS.has(upper)) return "wrapped";
@@ -75,23 +77,17 @@ export function categorizeToken(symbol: string): TokenCategory {
   if (NFT_TOKENS.has(upper)) return "nft";
   if (DEFI_TOKENS.has(upper)) return "defi";
   if (GOVERNANCE_TOKENS.has(upper)) return "governance";
-
   return "other";
 }
 
-export interface PortfolioSlice {
-  category: TokenCategory;
-  label: string;
-  color: string;
-  emoji: string;
-  valueUsd: number;
-  percentage: number;
-  tokenCount: number;
-  tokens: { symbol: string; valueUsd: number }[];
-}
-
 /**
- * Build portfolio breakdown from token balances + native balance
+ * Build a portfolio breakdown array from token balances and native balance.
+ * Groups tokens by category and calculates percentages for pie chart display.
+ *
+ * @param tokens - Array of tokens with symbol and USD value
+ * @param nativeBalanceUsd - USD value of the native token balance
+ * @param nativeCurrency - Native currency symbol (e.g. "ETH")
+ * @returns Sorted array of PortfolioSlice objects (largest first)
  */
 export function buildPortfolioBreakdown(
   tokens: { symbol: string; valueUsd: number | null }[],
@@ -109,13 +105,11 @@ export function buildPortfolioBreakdown(
     other:      { valueUsd: 0, tokens: [] },
   };
 
-  // Add native token as "wrapped" category (it's the base asset)
   if (nativeBalanceUsd > 0) {
     categoryValues.wrapped.valueUsd += nativeBalanceUsd;
     categoryValues.wrapped.tokens.push({ symbol: nativeCurrency, valueUsd: nativeBalanceUsd });
   }
 
-  // Categorize ERC-20 tokens
   for (const token of tokens) {
     if (!token.valueUsd || token.valueUsd <= 0) continue;
     const cat = categorizeToken(token.symbol);
@@ -125,13 +119,12 @@ export function buildPortfolioBreakdown(
 
   const totalValue = Object.values(categoryValues).reduce((sum, c) => sum + c.valueUsd, 0);
 
-  // Build slices (only non-zero)
   const slices: PortfolioSlice[] = [];
   for (const [cat, info] of Object.entries(categoryValues)) {
     if (info.valueUsd <= 0) continue;
     const meta = CATEGORY_MAP[cat as TokenCategory];
     slices.push({
-      category: cat as TokenCategory,
+      category: cat,
       label: meta.label,
       color: meta.color,
       emoji: meta.emoji,

@@ -1,14 +1,19 @@
 "use client";
 
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
-import { PortfolioSlice } from "@/lib/token-categories";
+import type { PortfolioSlice } from "@/types/wallet";
 import { useState } from "react";
 
+/** Props for the PortfolioPieChart component. */
 interface PortfolioPieChartProps {
   slices: PortfolioSlice[];
   totalValueUsd: number;
 }
 
+/**
+ * Interactive donut chart showing portfolio breakdown by token category.
+ * Hovering a slice highlights it and shows token details in the legend.
+ */
 export default function PortfolioPieChart({ slices, totalValueUsd }: PortfolioPieChartProps) {
   const [activeSlice, setActiveSlice] = useState<PortfolioSlice | null>(null);
 
@@ -95,7 +100,6 @@ export default function PortfolioPieChart({ slices, totalValueUsd }: PortfolioPi
 
         {/* Legend / Details */}
         <div className="flex-1 w-full">
-          {/* Active slice detail */}
           <div className="mb-4 p-3 rounded-xl border" style={{ backgroundColor: `${displaySlice.color}10`, borderColor: `${displaySlice.color}30` }}>
             <div className="flex items-center gap-2 mb-1">
               <span>{displaySlice.emoji}</span>
@@ -128,7 +132,6 @@ export default function PortfolioPieChart({ slices, totalValueUsd }: PortfolioPi
             </div>
           </div>
 
-          {/* Category list */}
           <div className="space-y-1.5">
             {slices.map((s) => (
               <button

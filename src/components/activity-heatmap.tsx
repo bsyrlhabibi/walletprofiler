@@ -2,10 +2,15 @@
 
 import { useMemo } from "react";
 
+/** Props for the ActivityHeatmap component. */
 interface HeatmapProps {
+  /** Array of activity counts (24 for hourly, 7 for daily). */
   data: number[];
+  /** Labels for each cell (day names or empty for hourly). */
   labels: string[];
+  /** Section title displayed above the heatmap. */
   title: string;
+  /** Heatmap layout mode: 24-hour or 7-day. */
   type: "hourly" | "daily";
 }
 

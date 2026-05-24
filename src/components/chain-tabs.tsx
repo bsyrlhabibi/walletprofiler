@@ -1,8 +1,12 @@
 "use client";
 
+/** Props for the ChainTabs component. */
 interface ChainTabsProps {
+  /** Currently active chain ID. */
   activeChain: string;
+  /** Callback when a chain tab is clicked. */
   onChainChange: (chain: string) => void;
+  /** Whether to disable tabs during loading. */
   loading?: boolean;
 }
 

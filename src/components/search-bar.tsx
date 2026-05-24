@@ -3,11 +3,17 @@
 import { useState, FormEvent, useRef, useEffect } from "react";
 import { Search, Loader2, Sparkles, ChevronDown } from "lucide-react";
 
+/** Props for the SearchBar component. */
 interface SearchBarProps {
+  /** Callback when a valid address is submitted. */
   onSearch: (address: string, chain: string) => void;
+  /** Whether an analysis is currently in progress. */
   loading: boolean;
+  /** Currently selected chain ID. */
   chain?: string;
+  /** Callback when the user selects a different chain. */
   onChainChange?: (chain: string) => void;
+  /** Whether to show the chain selector dropdown. */
   showChainSelector?: boolean;
 }
 

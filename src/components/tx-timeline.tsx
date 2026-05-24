@@ -1,15 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { Transaction } from "@/lib/types";
+import type { Transaction } from "@/types/wallet";
+import { shortenAddress, formatTimeAgo } from "@/utils/format";
 import { ArrowDownLeft, ArrowUpRight, RefreshCw, ExternalLink, Clock, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 
+/** Props for the TxTimeline component. */
 interface TxTimelineProps {
   transactions: Transaction[];
   currency?: string;
   explorerUrl?: string;
 }
 
+/**
+ * Paginated transaction timeline with direction filtering.
+ * Shows recent transactions as clickable links to the block explorer.
+ */
 export default function TxTimeline({ transactions, currency = "ETH", explorerUrl = "etherscan.io" }: TxTimelineProps) {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(5);
@@ -53,19 +59,6 @@ export default function TxTimeline({ transactions, currency = "ETH", explorerUrl
       case "out": return "text-rose-600";
       default: return "text-gray-500";
     }
-  };
-
-  const shortenAddr = (addr: string) =>
-    addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "—";
-
-  const formatTime = (ts: number) => {
-    if (!ts) return "Unknown";
-    const diff = Date.now() / 1000 - ts;
-    if (diff < 60) return "Just now";
-    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-    if (diff < 604800) return `${Math.floor(diff / 86400)}d ago`;
-    return new Date(ts * 1000).toLocaleDateString("en-US", { month: "short", day: "numeric" });
   };
 
   const getDisplayToken = (tx: Transaction) => {
@@ -157,7 +150,7 @@ export default function TxTimeline({ transactions, currency = "ETH", explorerUrl
                     <span className="hidden sm:inline">{badge}</span>
                   </div>
                   <div className="hidden sm:block text-xs text-gray-400 font-mono mt-0.5">
-                    {tx.direction === "in" ? `from ${shortenAddr(tx.from)}` : `to ${shortenAddr(tx.to)}`}
+                    {tx.direction === "in" ? `from ${shortenAddress(tx.from)}` : `to ${shortenAddress(tx.to)}`}
                   </div>
                 </div>
               </div>
@@ -168,7 +161,7 @@ export default function TxTimeline({ transactions, currency = "ETH", explorerUrl
                   </div>
                 </div>
                 <div className="hidden sm:block w-[90px] text-right flex-shrink-0">
-                  <div className="text-xs text-gray-400">{formatTime(tx.timestamp)}</div>
+                  <div className="text-xs text-gray-400">{formatTimeAgo(tx.timestamp)}</div>
                 </div>
                 <ExternalLink className="hidden sm:block w-3.5 h-3.5 text-gray-300 group-hover:text-fuchsia-400 transition" />
               </div>
@@ -186,7 +179,6 @@ export default function TxTimeline({ transactions, currency = "ETH", explorerUrl
       {/* Pagination bar */}
       {filteredTxs.length > 0 && (
         <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-100">
-          {/* Left: Show per page */}
           <div className="flex items-center gap-2 text-sm text-gray-500">
             <span>Show:</span>
             <select
@@ -205,7 +197,6 @@ export default function TxTimeline({ transactions, currency = "ETH", explorerUrl
             <span>Records</span>
           </div>
 
-          {/* Right: Page navigation */}
           <div className="flex items-center gap-2">
             <button onClick={() => setPage(1)} disabled={safePage <= 1} className={pageBtn}>
               <ChevronsLeft className="w-4 h-4" />

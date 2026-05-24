@@ -1,5 +1,13 @@
-import { Transaction, TradingPattern, TokenBalance } from "./types";
+/**
+ * Transaction analysis engine for wallet profiling.
+ * Computes activity scores, trust scores, persona classification,
+ * and trading pattern statistics from transaction history.
+ * @module lib/analysis
+ */
 
+import type { Transaction, TradingPattern, TokenBalance } from "@/types/wallet";
+
+/** Persona classification thresholds based on activity score (0-100). */
 const PERSONAS = [
   { min: 0, max: 20, type: "Observer", emoji: "👀", description: "Barely on-chain. Watches from the sidelines." },
   { min: 20, max: 40, type: "Casual", emoji: "🚶", description: "Occasional transactions. Dipping toes in DeFi." },
@@ -8,14 +16,14 @@ const PERSONAS = [
   { min: 80, max: 101, type: "Whale Degen", emoji: "🐋", description: "Top-tier on-chain presence. Moves markets." },
 ];
 
-// Known trusted tokens (blue chips)
+/** Known blue-chip tokens considered trustworthy. */
 const TRUSTED_TOKENS = new Set([
   "WETH", "USDC", "USDT", "DAI", "WBTC", "LINK", "UNI", "AAVE",
   "COMP", "MKR", "SNX", "CRV", "LDO", "RPL", "PEPE", "SHIB",
   "ENS", "LRC", "ZRX", "BAL", "SUSHI", "YFI", "GRT", "MATIC",
 ]);
 
-// Known trusted contract patterns (DEX routers, well-known protocols)
+/** Known trusted contract addresses (DEX routers, major protocols). */
 const TRUSTED_CONTRACT_PATTERNS = [
   "0x7a250d5630b4cf539739df2c5dacb4c659f2488d", // Uniswap V2 Router
   "0xe592427a0aece92de3edee1f18e0157c05861564", // Uniswap V3 Router
@@ -27,6 +35,14 @@ const TRUSTED_CONTRACT_PATTERNS = [
   "0x3fc91a3afd70395cd496c647d5a6cc9d4b2b7fad", // Uniswap Universal Router
 ];
 
+/**
+ * Analyze a wallet's transactions to produce a full trading pattern.
+ * Computes activity score, trust score, persona, and statistical metrics.
+ *
+ * @param txs - Array of parsed transactions
+ * @param tokens - Array of token balances held by the wallet
+ * @returns Complete TradingPattern with all computed scores and metrics
+ */
 export function analyzeTransactions(
   txs: Transaction[],
   tokens: TokenBalance[]
@@ -78,9 +94,7 @@ export function analyzeTransactions(
     .slice(0, 5)
     .map((t) => ({ symbol: t.symbol, count: 1 }));
 
-  // =============================================
-  // ACTIVITY SCORE (0-100) — seberapa aktif
-  // =============================================
+  // === Activity Score (0-100) ===
   const activityFactors: string[] = [];
   let activityScore = 0;
 
@@ -114,13 +128,10 @@ export function analyzeTransactions(
 
   activityScore = Math.round(Math.min(activityScore, 100));
 
-  // =============================================
-  // TRUST SCORE (0-100) — seberapa legit/aman
-  // =============================================
+  // === Trust Score (0-100) ===
   const trustFactors: string[] = [];
-  let trustScore = 50; // start neutral
+  let trustScore = 50;
 
-  // 1. Account age (older = more trustworthy)
   if (firstActivity > 0 && lastActivity > 0) {
     const ageDays = (lastActivity - firstActivity) / 86400;
     if (ageDays > 365) {
@@ -138,7 +149,6 @@ export function analyzeTransactions(
     }
   }
 
-  // 2. Failed tx ratio (more failures = less trustworthy)
   const failedCount = txs.filter((t) => t.status === "failed").length;
   const failRatio = failedCount / txs.length;
   if (failRatio > 0.3) {
@@ -152,7 +162,6 @@ export function analyzeTransactions(
     trustFactors.push("Low failure rate — clean execution history");
   }
 
-  // 3. Interaction with trusted contracts
   let trustedContractCount = 0;
   for (const contract of Array.from(contractSet)) {
     if (TRUSTED_CONTRACT_PATTERNS.includes(contract.toLowerCase())) {
@@ -164,7 +173,6 @@ export function analyzeTransactions(
     trustFactors.push(`Interacts with known trusted protocols (${trustedContractCount})`);
   }
 
-  // 4. Token quality (holding blue chips = more legit)
   const trustedTokenCount = tokens.filter((t) =>
     TRUSTED_TOKENS.has(t.symbol.toUpperCase())
   ).length;
@@ -176,20 +184,16 @@ export function analyzeTransactions(
     trustFactors.push(`Holds ${trustedTokenCount} known token(s)`);
   }
 
-  // 5. Suspicious patterns
-  // Very one-sided buy/sell ratio (potential pump scheme)
   if (buyRatio > 0.95 || buyRatio < 0.05) {
     trustScore -= 10;
     trustFactors.push("Extreme buy/sell imbalance — potential scheme activity");
   }
 
-  // Very large single transaction relative to average
   if (largestTx > avgTxValue * 100 && avgTxValue > 0) {
     trustScore -= 5;
     trustFactors.push("Unusually large transaction spike detected");
   }
 
-  // Holding many unknown tokens (potential dust/spam tokens)
   const unknownTokens = tokens.filter((t) =>
     !TRUSTED_TOKENS.has(t.symbol.toUpperCase()) &&
     t.symbol !== "???" &&
@@ -200,7 +204,6 @@ export function analyzeTransactions(
     trustFactors.push(`${unknownTokens} unknown tokens in portfolio (possible dust/spam)`);
   }
 
-  // 6. Normal, consistent activity = positive
   if (txs.length > 50 && failRatio < 0.05 && activeDays > 60) {
     trustScore += 10;
     trustFactors.push("Consistent, reliable on-chain behavior");
@@ -208,39 +211,26 @@ export function analyzeTransactions(
 
   trustScore = Math.round(Math.max(0, Math.min(100, trustScore)));
 
-  // Trust level label
   let trustLevel: string;
   if (trustScore >= 80) trustLevel = "Trusted";
   else if (trustScore >= 60) trustLevel = "Moderate";
   else if (trustScore >= 40) trustLevel = "Caution";
   else trustLevel = "Risky";
 
-  // Persona based on ACTIVITY score (not trust)
   const persona = PERSONAS.find((p) => activityScore >= p.min && activityScore < p.max) || PERSONAS[0];
 
   return {
     totalTransactions: txs.length,
-    firstActivity,
-    lastActivity,
-    activeDays,
+    firstActivity, lastActivity, activeDays,
     avgTxPerDay: activeDays > 0 ? +(txs.length / activeDays).toFixed(2) : 0,
     avgTxValue: +avgTxValue.toFixed(6),
     medianTxValue: +medianTxValue.toFixed(6),
     largestTx: +largestTx.toFixed(6),
     totalVolume: +totalVolume.toFixed(4),
-    uniqueTokens,
-    uniqueContracts,
-    buyCount,
-    sellCount,
+    uniqueTokens, uniqueContracts, buyCount, sellCount,
     buyRatio: +buyRatio.toFixed(3),
-    preferredTokens,
-    activityByHour,
-    activityByDay,
-    activityScore,
-    trustScore,
-    trustLevel,
-    trustFactors,
-    activityFactors,
+    preferredTokens, activityByHour, activityByDay,
+    activityScore, trustScore, trustLevel, trustFactors, activityFactors,
     personaType: persona.type,
     personaEmoji: persona.emoji,
     personaDescription: persona.description,
