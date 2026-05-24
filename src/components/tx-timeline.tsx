@@ -1,7 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { Transaction } from "@/lib/types";
-import { ArrowDownLeft, ArrowUpRight, RefreshCw, ExternalLink, Clock } from "lucide-react";
+import { ArrowDownLeft, ArrowUpRight, RefreshCw, ExternalLink, Clock, ChevronDown } from "lucide-react";
 
 interface TxTimelineProps {
   transactions: Transaction[];
@@ -9,8 +10,13 @@ interface TxTimelineProps {
   explorerUrl?: string;
 }
 
+const TX_PER_PAGE = 10;
+
 export default function TxTimeline({ transactions, currency = "ETH", explorerUrl = "etherscan.io" }: TxTimelineProps) {
-  const displayTxs = transactions.slice(0, 20);
+  const [page, setPage] = useState(1);
+
+  const totalPages = Math.ceil(transactions.length / TX_PER_PAGE);
+  const displayTxs = transactions.slice(0, page * TX_PER_PAGE);
 
   const getIcon = (dir: string) => {
     switch (dir) {
@@ -57,22 +63,14 @@ export default function TxTimeline({ transactions, currency = "ETH", explorerUrl
     return new Date(ts * 1000).toLocaleDateString("en-US", { month: "short", day: "numeric" });
   };
 
-  // Get the correct display token for a transaction
   const getDisplayToken = (tx: Transaction) => {
-    // If it's an external/native transfer, show native currency
     if (tx.category === "external") return currency;
-    // Otherwise show the actual asset name
     return tx.asset || "???";
   };
 
-  // Format value based on token type
   const formatValue = (tx: Transaction) => {
     const val = tx.valueFormatted;
-    if (tx.category === "external") {
-      // Native token — show 4 decimals
-      return val.toFixed(4);
-    }
-    // ERC-20 — format based on size
+    if (tx.category === "external") return val.toFixed(4);
     if (val >= 1000000) return `${(val / 1000000).toFixed(2)}M`;
     if (val >= 1000) return `${(val / 1000).toFixed(2)}K`;
     if (val >= 1) return val.toFixed(2);
@@ -90,11 +88,17 @@ export default function TxTimeline({ transactions, currency = "ETH", explorerUrl
 
   return (
     <div className="glass-card p-4 animate-fade-in animate-fade-in-delay-3">
-      <h3 className="text-sm font-semibold text-gray-600 mb-3 flex items-center gap-2">
-        <Clock className="w-4 h-4 text-fuchsia-400" />
-        Recent Transactions
-      </h3>
-      <div className="space-y-1">
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="text-sm font-semibold text-gray-600 flex items-center gap-2">
+          <Clock className="w-4 h-4 text-fuchsia-400" />
+          Transactions
+        </h3>
+        <span className="text-xs text-gray-400 bg-fuchsia-50 px-2 py-0.5 rounded-full">
+          {transactions.length} total
+        </span>
+      </div>
+
+      <div className="space-y-1 max-h-[400px] overflow-y-auto pr-1 scrollbar-thin">
         {displayTxs.map((tx, i) => {
           const token = getDisplayToken(tx);
           const value = formatValue(tx);
@@ -139,12 +143,24 @@ export default function TxTimeline({ transactions, currency = "ETH", explorerUrl
             </a>
           );
         })}
-        {displayTxs.length === 0 && (
+
+        {transactions.length === 0 && (
           <div className="text-center text-gray-400 text-sm py-8">
             No transactions found
           </div>
         )}
       </div>
+
+      {/* Load More button */}
+      {page < totalPages && (
+        <button
+          onClick={() => setPage((p) => p + 1)}
+          className="w-full mt-3 py-2.5 rounded-xl text-sm font-semibold text-fuchsia-600 bg-fuchsia-50 hover:bg-fuchsia-100 border border-fuchsia-100 transition flex items-center justify-center gap-1.5"
+        >
+          <ChevronDown className="w-4 h-4" />
+          Load More ({transactions.length - displayTxs.length} remaining)
+        </button>
+      )}
     </div>
   );
 }

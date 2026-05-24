@@ -22,11 +22,9 @@ const CHAIN_NATIVE: Record<string, { name: string; symbol: string; icon: string;
 export default function TokenHoldings({ tokens, ethBalance, chain, explorerUrl = "etherscan.io", nativePriceUsd }: TokenHoldingsProps) {
   const native = CHAIN_NATIVE[chain || "eth"] || CHAIN_NATIVE.eth;
 
-  // Filter: only tokens with USD value, sorted by value descending
   const valuedTokens = tokens
     .filter((t) => t.valueUsd && t.valueUsd > 0)
-    .sort((a, b) => (b.valueUsd || 0) - (a.valueUsd || 0))
-    .slice(0, 15);
+    .sort((a, b) => (b.valueUsd || 0) - (a.valueUsd || 0));
 
   const nativeUsd = nativePriceUsd && nativePriceUsd > 0 ? ethBalance * nativePriceUsd : null;
 
@@ -42,9 +40,9 @@ export default function TokenHoldings({ tokens, ethBalance, chain, explorerUrl =
         </span>
       </div>
 
-      <div className="space-y-1.5">
+      <div className="space-y-1.5 max-h-[400px] overflow-y-auto pr-1 scrollbar-thin">
         {/* Native token (ETH/MATIC) */}
-        <div className="flex items-center justify-between py-2.5 px-3 bg-blue-50/80 rounded-xl border border-blue-100/50 hover:bg-blue-50 transition">
+        <div className="flex items-center justify-between py-2.5 px-3 bg-blue-50/80 rounded-xl border border-blue-100/50 hover:bg-blue-50 transition sticky top-0 z-10">
           <div className="flex items-center gap-3">
             <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${native.color} flex items-center justify-center text-white text-sm font-bold shadow-md shadow-blue-200`}>
               {native.icon}
