@@ -275,9 +275,11 @@ export default function Home() {
         {profile && !loading && (
           <div className="space-y-5">
             {/* Search bar (no dropdown) + Chain tabs */}
-            <div className="space-y-3">
+            <div className="space-y-5">
               <SearchBar onSearch={handleSearch} loading={loading} chain={analyzedChain} showChainSelector={false} />
-              <ChainTabs activeChain={analyzedChain} onChainChange={handleChainSwitch} loading={loading} />
+              <div className="mt-2">
+                <ChainTabs activeChain={analyzedChain} onChainChange={handleChainSwitch} loading={loading} />
+              </div>
             </div>
 
             {/* Persona Card */}
