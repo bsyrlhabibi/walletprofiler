@@ -228,7 +228,15 @@ export default function Home() {
         {profile && !loading && (
           <div className="space-y-5">
             {/* Search bar (no dropdown) + Chain tabs */}
+            {/* Back to Home */}
             <div className="space-y-3">
+              <button
+                onClick={goHome}
+                className="flex items-center gap-2 text-sm text-gray-500 hover:text-fuchsia-600 font-medium transition group"
+              >
+                <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
+                Back to Search
+              </button>
               <SearchBar onSearch={handleSearch} loading={loading} chain={analyzedChain} showChainSelector={false} />
               <ChainTabs activeChain={analyzedChain} onChainChange={handleChainSwitch} loading={loading} />
             </div>

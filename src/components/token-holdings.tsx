@@ -38,7 +38,7 @@ export default function TokenHoldings({ tokens, ethBalance, chain, explorerUrl =
           Token Holdings
         </h3>
         <span className="text-xs text-gray-400 bg-amber-50 px-2 py-0.5 rounded-full">
-          {valuedTokens.length + 1} assets
+          {tokens.length + 1} assets
         </span>
       </div>
 

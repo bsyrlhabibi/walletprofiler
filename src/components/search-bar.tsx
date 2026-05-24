@@ -84,7 +84,7 @@ export default function SearchBar({ onSearch, loading, chain: chainProp, onChain
                         onChainChange?.(c.id);
                         setShowChains(false);
                       }}
-                      className={`w-full flex items-center gap-2.5 px-4 py-2.5 text-sm hover:bg-gray-50 transition cursor-pointer ${
+                      className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-gray-50 transition cursor-pointer ${
                         c.id === chain ? "font-bold text-fuchsia-600 bg-fuchsia-50" : "text-gray-600"
                       }`}
                     >
