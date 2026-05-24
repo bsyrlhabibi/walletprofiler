@@ -13,11 +13,15 @@ interface TxTimelineProps {
 export default function TxTimeline({ transactions, currency = "ETH", explorerUrl = "etherscan.io" }: TxTimelineProps) {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
+  const [filter, setFilter] = useState<"all" | "in" | "out">("all");
+  const filteredTxs = filter === "all"
+    ? transactions
+    : transactions.filter((tx) => tx.direction === filter);
 
-  const totalPages = Math.max(1, Math.ceil(transactions.length / perPage));
+  const totalPages = Math.max(1, Math.ceil(filteredTxs.length / perPage));
   const safePage = Math.min(page, totalPages);
   const start = (safePage - 1) * perPage;
-  const displayTxs = transactions.slice(start, start + perPage);
+  const displayTxs = filteredTxs.slice(start, start + perPage);
 
   const getIcon = (dir: string) => {
     switch (dir) {
@@ -97,8 +101,30 @@ export default function TxTimeline({ transactions, currency = "ETH", explorerUrl
           Transactions
         </h3>
         <span className="text-xs text-gray-400 bg-fuchsia-50 px-2 py-0.5 rounded-full">
-          {transactions.length} total
+          {filteredTxs.length}{filter !== "all" ? ` ${filter}` : ""} total
         </span>
+      </div>
+
+      {/* Table header */}
+      <div className="flex items-center justify-between py-2 px-3 mb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider border-b border-gray-100">
+        <div className="flex items-center gap-2 w-[200px]">
+          <select
+            value={filter}
+            onChange={(e) => {
+              setFilter(e.target.value as "all" | "in" | "out");
+              setPage(1);
+            }}
+            className="px-2 py-1 rounded-lg border border-gray-200 bg-white text-gray-600 text-xs font-semibold cursor-pointer hover:border-indigo-300 transition outline-none normal-case"
+          >
+            <option value="all">Any</option>
+            <option value="in">In</option>
+            <option value="out">Out</option>
+          </select>
+          <span>Type</span>
+        </div>
+        <div className="text-right min-w-[80px]">Amount</div>
+        <div className="text-right min-w-[70px]">Age</div>
+        <div className="w-[14px]"></div>
       </div>
 
       {/* Transaction list */}
@@ -150,7 +176,7 @@ export default function TxTimeline({ transactions, currency = "ETH", explorerUrl
           );
         })}
 
-        {transactions.length === 0 && (
+        {filteredTxs.length === 0 && (
           <div className="text-center text-gray-400 text-sm py-8">
             No transactions found
           </div>
@@ -158,7 +184,7 @@ export default function TxTimeline({ transactions, currency = "ETH", explorerUrl
       </div>
 
       {/* Pagination bar */}
-      {transactions.length > 0 && (
+      {filteredTxs.length > 0 && (
         <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-100">
           {/* Left: Show per page */}
           <div className="flex items-center gap-2 text-sm text-gray-500">
