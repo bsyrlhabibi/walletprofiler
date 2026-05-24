@@ -96,17 +96,17 @@ export default function TxTimeline({ transactions, currency = "ETH", explorerUrl
   return (
     <div className="glass-card p-4 animate-fade-in animate-fade-in-delay-3">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-300 flex items-center gap-2">
+        <h3 className="text-sm font-semibold text-gray-600 flex items-center gap-2">
           <Clock className="w-4 h-4 text-fuchsia-400" />
           Transactions
         </h3>
-        <span className="text-xs text-gray-400 dark:text-gray-500 bg-fuchsia-50 dark:bg-fuchsia-950 px-2 py-0.5 rounded-full">
+        <span className="text-xs text-gray-400 bg-fuchsia-50 px-2 py-0.5 rounded-full">
           {filteredTxs.length}{filter !== "all" ? ` ${filter}` : ""} total
         </span>
       </div>
 
       {/* Table header */}
-      <div className="flex items-center py-2 px-3 mb-1 text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider border-b border-gray-100 dark:border-gray-800">
+      <div className="flex items-center py-2 px-3 mb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider border-b border-gray-100">
         <div className="flex items-center gap-2 flex-1 min-w-0">
           <select
             value={filter}
@@ -114,7 +114,7 @@ export default function TxTimeline({ transactions, currency = "ETH", explorerUrl
               setFilter(e.target.value as "all" | "in" | "out");
               setPage(1);
             }}
-            className="px-2 py-1 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-semibold cursor-pointer hover:border-indigo-300 transition outline-none normal-case"
+            className="px-2 py-1 rounded-lg border border-gray-200 bg-white text-gray-600 text-xs font-semibold cursor-pointer hover:border-indigo-300 transition outline-none normal-case"
           >
             <option value="all">Any</option>
             <option value="in">In</option>
@@ -140,7 +140,7 @@ export default function TxTimeline({ transactions, currency = "ETH", explorerUrl
               href={`https://${explorerUrl}/tx/${tx.hash}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-between py-2.5 px-3 rounded-xl bg-white dark:bg-gray-800/50 border border-gray-100 dark:border-gray-800 hover:border-gray-200 dark:hover:border-gray-700 hover:bg-gray-50/50 dark:hover:bg-gray-800 transition group shadow-sm"
+              className="flex items-center justify-between py-2.5 px-3 rounded-xl bg-white border border-gray-100 hover:border-gray-200 hover:bg-gray-50/50 transition group shadow-sm"
             >
               <div className="flex items-center gap-3">
                 <div className={`w-9 h-9 rounded-xl ${getBg(tx.direction)} flex items-center justify-center`}>
@@ -151,12 +151,12 @@ export default function TxTimeline({ transactions, currency = "ETH", explorerUrl
                     <span className={`text-sm font-semibold ${getDirectionColor(tx.direction)}`}>
                       {getDirectionLabel(tx.direction)}
                     </span>
-                    <span className="text-xs font-semibold text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded">
+                    <span className="text-xs font-semibold text-gray-700 bg-gray-100 px-1.5 py-0.5 rounded">
                       {token}
                     </span>
                     <span className="hidden sm:inline">{badge}</span>
                   </div>
-                  <div className="hidden sm:block text-xs text-gray-400 dark:text-gray-500 font-mono mt-0.5">
+                  <div className="hidden sm:block text-xs text-gray-400 font-mono mt-0.5">
                     {tx.direction === "in" ? `from ${shortenAddr(tx.from)}` : `to ${shortenAddr(tx.to)}`}
                   </div>
                 </div>
@@ -168,16 +168,16 @@ export default function TxTimeline({ transactions, currency = "ETH", explorerUrl
                   </div>
                 </div>
                 <div className="hidden sm:block w-[90px] text-right flex-shrink-0">
-                  <div className="text-xs text-gray-400 dark:text-gray-500">{formatTime(tx.timestamp)}</div>
+                  <div className="text-xs text-gray-400">{formatTime(tx.timestamp)}</div>
                 </div>
-                <ExternalLink className="hidden sm:block w-3.5 h-3.5 text-gray-300 dark:text-gray-600 group-hover:text-fuchsia-400 transition" />
+                <ExternalLink className="hidden sm:block w-3.5 h-3.5 text-gray-300 group-hover:text-fuchsia-400 transition" />
               </div>
             </a>
           );
         })}
 
         {filteredTxs.length === 0 && (
-          <div className="text-center text-gray-400 dark:text-gray-500 text-sm py-8">
+          <div className="text-center text-gray-400 text-sm py-8">
             No transactions found
           </div>
         )}
@@ -185,9 +185,9 @@ export default function TxTimeline({ transactions, currency = "ETH", explorerUrl
 
       {/* Pagination bar */}
       {filteredTxs.length > 0 && (
-        <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-100 dark:border-gray-800">
+        <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-100">
           {/* Left: Show per page */}
-          <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+          <div className="flex items-center gap-2 text-sm text-gray-500">
             <span>Show:</span>
             <select
               value={perPage}
@@ -195,7 +195,7 @@ export default function TxTimeline({ transactions, currency = "ETH", explorerUrl
                 setPerPage(Number(e.target.value));
                 setPage(1);
               }}
-              className="px-2 py-1 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm font-medium cursor-pointer hover:border-indigo-300 transition outline-none"
+              className="px-2 py-1 rounded-lg border border-gray-200 bg-white text-gray-700 text-sm font-medium cursor-pointer hover:border-indigo-300 transition outline-none"
             >
               <option value={5}>5</option>
               <option value={10}>10</option>
@@ -213,7 +213,7 @@ export default function TxTimeline({ transactions, currency = "ETH", explorerUrl
             <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={safePage <= 1} className={pageBtn}>
               <ChevronLeft className="w-4 h-4" />
             </button>
-            <span className="text-sm text-gray-600 dark:text-gray-300 font-medium px-2">
+            <span className="text-sm text-gray-600 font-medium px-2">
               Page {safePage} of {totalPages}
             </span>
             <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={safePage >= totalPages} className={pageBtn}>

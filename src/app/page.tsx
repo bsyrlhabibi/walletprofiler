@@ -130,7 +130,7 @@ export default function Home() {
             {profile && (
               <button
                 onClick={goHome}
-                className="flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400 hover:text-fuchsia-600 dark:hover:text-fuchsia-400 px-3 py-1.5 rounded-lg hover:bg-fuchsia-50 dark:hover:bg-fuchsia-950 transition font-medium"
+                className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-fuchsia-600 px-3 py-1.5 rounded-lg hover:bg-fuchsia-50 transition font-medium"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 Home
@@ -140,7 +140,7 @@ export default function Home() {
               href="https://etherscan.io"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400 hover:text-fuchsia-600 dark:hover:text-fuchsia-400 px-2.5 py-1.5 rounded-lg hover:bg-fuchsia-50 dark:hover:bg-fuchsia-950 transition font-medium"
+              className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-fuchsia-600 px-2.5 py-1.5 rounded-lg hover:bg-fuchsia-50 transition font-medium"
               title="Etherscan"
             >
               <img src="https://etherscan.io/images/favicon3.ico" alt="ETH" className="w-4 h-4 rounded-sm" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
@@ -150,7 +150,7 @@ export default function Home() {
               href="https://bscscan.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400 hover:text-fuchsia-600 dark:hover:text-fuchsia-400 px-2.5 py-1.5 rounded-lg hover:bg-fuchsia-50 dark:hover:bg-fuchsia-950 transition font-medium"
+              className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-fuchsia-600 px-2.5 py-1.5 rounded-lg hover:bg-fuchsia-50 transition font-medium"
               title="BscScan"
             >
               <img src="https://bscscan.com/images/favicon.ico" alt="BNB" className="w-4 h-4 rounded-sm" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
@@ -160,13 +160,13 @@ export default function Home() {
               href="https://basescan.org"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400 hover:text-fuchsia-600 dark:hover:text-fuchsia-400 px-2.5 py-1.5 rounded-lg hover:bg-fuchsia-50 dark:hover:bg-fuchsia-950 transition font-medium"
+              className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-fuchsia-600 px-2.5 py-1.5 rounded-lg hover:bg-fuchsia-50 transition font-medium"
               title="BaseScan"
             >
               <img src="https://basescan.org/assets/base/images/favicon.ico" alt="BASE" className="w-4 h-4 rounded-sm" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
               <span className="text-xs">BaseScan</span>
             </a>
-                      <ThemeToggle />
+            <ThemeToggle />
           </nav>
 
           {/* Mobile back button */}
@@ -194,7 +194,7 @@ export default function Home() {
               <h1 className="text-3xl sm:text-5xl font-black mb-3">
                 <span className="gradient-text">WalletProfiler</span>
               </h1>
-              <p className="text-gray-500 dark:text-gray-400 max-w-lg mx-auto text-base leading-relaxed">
+              <p className="text-gray-500 max-w-lg mx-auto text-base leading-relaxed">
                 Paste any EVM address to get a full on-chain intelligence report — persona, activity score, trading patterns, and more.
               </p>
             </div>
@@ -204,7 +204,7 @@ export default function Home() {
 
             {/* Example wallets */}
             <div className="mt-10 text-center">
-              <p className="text-xs text-gray-400 dark:text-gray-500 mb-3 font-medium">Try an example:</p>
+              <p className="text-xs text-gray-400 mb-3 font-medium">Try an example:</p>
               <div className="flex flex-wrap gap-2 justify-center">
                 {[
                   { label: "🟣 Ethereum Wallet", addr: "0xEF98b44533d97C59171C9FC58F2e0E6d12a25204", chain: "eth" },
@@ -214,7 +214,7 @@ export default function Home() {
                   <button
                     key={ex.label}
                     onClick={() => handleSearch(ex.addr, ex.chain)}
-                    className="text-sm text-fuchsia-600 hover:text-fuchsia-700 bg-white hover:bg-fuchsia-50 px-4 py-2 rounded-xl transition font-medium border border-fuchsia-100 hover:border-fuchsia-200 shadow-sm hover:shadow-md dark:text-fuchsia-400 dark:bg-gray-800 dark:hover:bg-fuchsia-950 dark:border-fuchsia-900"
+                    className="text-sm text-fuchsia-600 hover:text-fuchsia-700 bg-white hover:bg-fuchsia-50 px-4 py-2 rounded-xl transition font-medium border border-fuchsia-100 hover:border-fuchsia-200 shadow-sm hover:shadow-md"
                   >
                     {ex.label}
                   </button>
@@ -257,15 +257,15 @@ export default function Home() {
         {/* Error */}
         {error && (
           <div className="flex flex-col items-center justify-center min-h-[40vh]">
-            <div className="glass-card p-8 max-w-md text-center border-rose-100 dark:border-rose-900">
-              <div className="w-14 h-14 rounded-2xl bg-rose-50 dark:bg-rose-950 flex items-center justify-center mx-auto mb-4">
+            <div className="glass-card p-8 max-w-md text-center border-rose-100">
+              <div className="w-14 h-14 rounded-2xl bg-rose-50 flex items-center justify-center mx-auto mb-4">
                 <AlertTriangle className="w-7 h-7 text-rose-500" />
               </div>
               <p className="text-rose-600 font-bold text-lg mb-2">Analysis Failed</p>
               <p className="text-gray-500 text-sm">{error}</p>
               <button
                 onClick={goHome}
-                className="mt-5 text-sm text-fuchsia-600 dark:text-fuchsia-400 hover:text-fuchsia-700 font-semibold bg-fuchsia-50 dark:bg-fuchsia-950 px-4 py-2 rounded-xl transition"
+                className="mt-5 text-sm text-fuchsia-600 hover:text-fuchsia-700 font-semibold bg-fuchsia-50 px-4 py-2 rounded-xl transition"
               >
                 Back to Home
               </button>
@@ -277,7 +277,7 @@ export default function Home() {
         {profile && !loading && (
           <div className="space-y-5">
             {/* Search bar (no dropdown) + Chain tabs */}
-            <div className="space-y-4">
+            <div className="space-y-3">
               <SearchBar onSearch={handleSearch} loading={loading} chain={analyzedChain} showChainSelector={false} />
               <ChainTabs activeChain={analyzedChain} onChainChange={handleChainSwitch} loading={loading} />
             </div>
@@ -333,23 +333,39 @@ export default function Home() {
               />
               <TxTimeline transactions={profile.transactions} currency={chainCurrency[analyzedChain] || "ETH"} explorerUrl={profile.explorerUrl} />
             </div>
+
+            {/* Footer */}
+            <div className="text-center py-8 space-y-3">
+              <div className="flex items-center justify-center gap-2 text-xs text-gray-400">
+                <span className="bg-white/60 px-4 py-2 rounded-full border border-gray-100">
+                  Powered by Alchemy • {analyzedChain === "eth" ? "Ethereum" : analyzedChain === "polygon" ? "Polygon" : analyzedChain === "arbitrum" ? "Arbitrum" : analyzedChain === "optimism" ? "Optimism" : analyzedChain === "bnb" ? "BNB Chain" : "Base"} mainnet • {profile.pattern.totalTransactions} transactions analyzed
+                </span>
+              </div>
+              <div className="flex items-center justify-center gap-2">
+                <span className="text-sm">🐉</span>
+                <span className="text-xs font-medium text-gray-400 tracking-wide">
+                  Built by <span className="font-bold bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 bg-clip-text text-transparent">KOIDRAGON</span> — <span className="text-gray-500">Hermes Agent</span>
+                </span>
+                <span className="text-sm">🐉</span>
+              </div>
+            </div>
           </div>
         )}
-        {/* Footer - always visible */}
-        <footer className="border-t border-gray-200 dark:border-gray-800 mt-6 py-8 space-y-3">
-          <div className="flex items-center justify-center gap-2 text-xs text-gray-400 dark:text-gray-500">
-            <span className="bg-white/60 px-4 py-2 rounded-full border border-gray-100 dark:bg-gray-800/60 dark:border-gray-800">
-              Powered by Alchemy{profile ? ` • ${analyzedChain === "eth" ? "Ethereum" : analyzedChain === "polygon" ? "Polygon" : analyzedChain === "arbitrum" ? "Arbitrum" : analyzedChain === "optimism" ? "Optimism" : analyzedChain === "bnb" ? "BNB Chain" : "Base"} mainnet • ${profile.pattern.totalTransactions} transactions analyzed` : " • On-Chain Intelligence"}
-            </span>
-          </div>
-          <div className="flex items-center justify-center gap-2">
-            <span className="text-sm">🐉</span>
-            <span className="text-xs font-medium text-gray-400 dark:text-gray-500 tracking-wide">
-              Built by <span className="font-bold bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 bg-clip-text text-transparent">KOIDRAGON</span> — <span className="text-gray-500 dark:text-gray-600">Hermes Agent</span>
-            </span>
-            <span className="text-sm">🐉</span>
-          </div>
-        </footer>
+          {/* Universal Footer */}
+          <footer className="border-t border-gray-200 dark:border-gray-800 mt-6 py-8 space-y-3">
+            <div className="flex items-center justify-center gap-2 text-xs text-gray-400">
+              <span className="bg-white/60 px-4 py-2 rounded-full border border-gray-100 dark:bg-gray-800/60 dark:border-gray-800">
+                Powered by Alchemy{profile ? ` • ${analyzedChain === "eth" ? "Ethereum" : analyzedChain === "polygon" ? "Polygon" : analyzedChain === "arbitrum" ? "Arbitrum" : analyzedChain === "optimism" ? "Optimism" : analyzedChain === "bnb" ? "BNB Chain" : "Base"} mainnet • ${profile.pattern.totalTransactions} transactions analyzed` : " • On-Chain Intelligence"}
+              </span>
+            </div>
+            <div className="flex items-center justify-center gap-2">
+              <span className="text-sm">🐉</span>
+              <span className="text-xs font-medium text-gray-400 tracking-wide">
+                Built by <span className="font-bold bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 bg-clip-text text-transparent">KOIDRAGON</span> — <span className="text-gray-500">Hermes Agent</span>
+              </span>
+              <span className="text-sm">🐉</span>
+            </div>
+          </footer>
       </main>
     </div>
   );
