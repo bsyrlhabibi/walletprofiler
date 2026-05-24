@@ -47,9 +47,9 @@ export default function TokenHoldings({ tokens, ethBalance, chain, explorerUrl =
         </span>
       </div>
 
-      <div className="space-y-1.5 max-h-[372px] overflow-y-auto pr-1 scrollbar-thin">
+      <div className="space-y-1.5 max-h-[430px] overflow-y-auto pr-1 scrollbar-thin bg-white rounded-xl">
         {/* Native token (ETH/MATIC) */}
-        <div className="flex items-center justify-between py-2.5 px-3 bg-blue-50/80 rounded-xl border border-gray-200 hover:bg-blue-50 transition sticky top-0 z-10">
+        <div className="flex items-center justify-between py-2.5 px-3 bg-blue-50 rounded-xl border border-gray-200 hover:bg-blue-100 transition sticky top-0 z-10 shadow-sm">
           <div className="flex items-center gap-3">
             <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${native.color} flex items-center justify-center text-white text-sm font-bold shadow-md shadow-blue-200`}>
               {native.icon}
@@ -84,7 +84,7 @@ export default function TokenHoldings({ tokens, ethBalance, chain, explorerUrl =
           return (
             <div
               key={token.contractAddress}
-              className="flex items-center justify-between py-2.5 px-3 rounded-xl border border-gray-100 hover:border-gray-200 hover:bg-gray-50 transition group"
+              className="flex items-center justify-between py-2.5 px-3 rounded-xl border border-gray-100 bg-white hover:border-gray-200 hover:bg-gray-50 transition group" 
             >
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-xs overflow-hidden shadow-sm">
