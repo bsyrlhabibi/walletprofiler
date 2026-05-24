@@ -66,15 +66,15 @@ export default function SearchBar({ onSearch, loading, chain: chainProp, onChain
                   e.stopPropagation();
                   setShowChains(!showChains);
                 }}
-                className={`flex items-center gap-1 px-3 py-2.5 rounded-xl text-xs font-semibold border transition cursor-pointer hover:opacity-80 active:scale-95 ${selectedChain.color}`}
+                className={`flex items-center gap-1 px-2 sm:px-3 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-xs font-semibold border transition cursor-pointer hover:opacity-80 active:scale-95 ${selectedChain.color}`}
               >
-                <span className="text-base">{selectedChain.icon}</span>
+                <span className="text-sm sm:text-base">{selectedChain.icon}</span>
                 <span className="hidden sm:inline">{selectedChain.label}</span>
                 <ChevronDown className={`w-3 h-3 transition-transform ${showChains ? "rotate-180" : ""}`} />
               </button>
 
               {showChains && (
-                <div className="absolute top-full left-0 mt-2 bg-white rounded-xl shadow-2xl border border-gray-200 py-1 z-[100] min-w-[160px] animate-fade-in">
+                <div className="absolute top-full left-0 mt-1 bg-white rounded-xl shadow-2xl border border-gray-200 py-1 z-[200] min-w-[160px] animate-fade-in">
                   {CHAINS.map((c) => (
                     <button
                       key={c.id}

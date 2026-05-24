@@ -17,13 +17,13 @@ const CHAINS = [
 
 export default function ChainTabs({ activeChain, onChainChange, loading }: ChainTabsProps) {
   return (
-    <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-thin">
+    <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 scrollbar-thin px-1">
       {CHAINS.map((c) => (
         <button
           key={c.id}
           onClick={() => onChainChange(c.id)}
           disabled={loading}
-          className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold border transition-all ${
+          className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold border transition-all flex-shrink-0 ${
             c.id === activeChain
               ? `${c.color} ring-2 ring-offset-1 ring-fuchsia-300 shadow-md`
               : "bg-white text-gray-500 border-gray-200 hover:bg-gray-50 hover:text-gray-700"
