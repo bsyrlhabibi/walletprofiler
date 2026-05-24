@@ -69,6 +69,7 @@ export interface WalletProfile {
   transactions: Transaction[];
   pattern: TradingPattern;
   chain: string;
+  explorerUrl: string;
 }
 
 export interface ActivityHeatmapData {

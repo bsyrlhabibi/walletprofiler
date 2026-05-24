@@ -6,9 +6,10 @@ import { ArrowDownLeft, ArrowUpRight, RefreshCw, ExternalLink, Clock } from "luc
 interface TxTimelineProps {
   transactions: Transaction[];
   currency?: string;
+  explorerUrl?: string;
 }
 
-export default function TxTimeline({ transactions, currency = "ETH" }: TxTimelineProps) {
+export default function TxTimeline({ transactions, currency = "ETH", explorerUrl = "etherscan.io" }: TxTimelineProps) {
   const displayTxs = transactions.slice(0, 20);
 
   const getIcon = (dir: string) => {
@@ -102,7 +103,7 @@ export default function TxTimeline({ transactions, currency = "ETH" }: TxTimelin
           return (
             <a
               key={`${tx.hash}-${i}`}
-              href={`https://etherscan.io/tx/${tx.hash}`}
+              href={`https://${explorerUrl}/tx/${tx.hash}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-between py-2.5 px-3 rounded-xl hover:bg-gray-50 transition group"

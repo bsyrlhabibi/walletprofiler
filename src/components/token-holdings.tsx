@@ -7,6 +7,8 @@ interface TokenHoldingsProps {
   tokens: TokenBalance[];
   ethBalance: number;
   chain?: string;
+  explorerUrl?: string;
+  nativePriceUsd?: number;
 }
 
 const CHAIN_NATIVE: Record<string, { name: string; symbol: string; icon: string; color: string }> = {
@@ -17,7 +19,7 @@ const CHAIN_NATIVE: Record<string, { name: string; symbol: string; icon: string;
   base: { name: "Base", symbol: "ETH", icon: "🔷", color: "from-sky-400 to-cyan-500" },
 };
 
-export default function TokenHoldings({ tokens, ethBalance, chain }: TokenHoldingsProps) {
+export default function TokenHoldings({ tokens, ethBalance, chain, explorerUrl = "etherscan.io", nativePriceUsd }: TokenHoldingsProps) {
   const displayTokens = tokens.slice(0, 15);
   const native = CHAIN_NATIVE[chain || "eth"] || CHAIN_NATIVE.eth;
 
@@ -43,8 +45,11 @@ export default function TokenHoldings({ tokens, ethBalance, chain }: TokenHoldin
               <div className="text-xs text-gray-400">{native.symbol}</div>
             </div>
           </div>
-          <div className="text-right">
+            <div className="text-right">
             <div className="text-sm font-mono font-semibold text-gray-800">{ethBalance.toFixed(4)}</div>
+            {nativePriceUsd && nativePriceUsd > 0 && (
+              <div className="text-xs text-gray-400">${(ethBalance * nativePriceUsd).toFixed(2)}</div>
+            )}
           </div>
         </div>
 
@@ -82,9 +87,12 @@ export default function TokenHoldings({ tokens, ethBalance, chain }: TokenHoldin
               <div className="flex items-center gap-2">
                 <div className="text-right">
                   <div className="text-sm font-mono text-gray-600">{displayBalance}</div>
+                  {token.valueUsd && token.valueUsd > 0 && (
+                    <div className="text-xs text-gray-400">${token.valueUsd.toFixed(2)}</div>
+                  )}
                 </div>
                 <a
-                  href={`https://etherscan.io/token/${token.contractAddress}`}
+                  href={`https://${explorerUrl}/token/${token.contractAddress}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-300 group-hover:text-fuchsia-400 transition"

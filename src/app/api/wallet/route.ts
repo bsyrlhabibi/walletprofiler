@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
   getBalance, getAssetTransfers, getTokenBalances, getTokenMetadata,
-  getBlock, isAlchemyConfigured, getSupportedChains, getChainCurrency
+  getBlock, isAlchemyConfigured, getSupportedChains, getChainCurrency,
+  getExplorerUrl, getChainCoinGeckoId, getPrices, getCoinGeckoId
 } from "@/lib/alchemy";
 import { analyzeTransactions } from "@/lib/analysis";
 import { Transaction, TokenBalance, WalletProfile } from "@/lib/types";
@@ -27,6 +28,7 @@ export async function GET(req: NextRequest) {
     const addr = address.toLowerCase();
     const currency = getChainCurrency(chain);
     const nativeName = chain === "polygon" ? "Polygon" : chain === "base" ? "Base" : chain === "optimism" ? "Optimism" : chain === "arbitrum" ? "Arbitrum" : "Ethereum";
+    const explorerUrl = getExplorerUrl(chain);
 
     const [ethBalanceHex, allTransfersOut, allTransfersIn, ethOnlyOut, ethOnlyIn, rawTokenBalances] = await Promise.all([
       getBalance(address, chain),
@@ -41,6 +43,8 @@ export async function GET(req: NextRequest) {
 
     // Process token balances with metadata
     const tokenBalances: TokenBalance[] = [];
+    const tokenSymbols: string[] = [];
+
     for (const tb of rawTokenBalances) {
       const rawBalance = parseInt(tb.tokenBalance || "0x0", 16);
       if (rawBalance === 0) continue;
@@ -51,10 +55,13 @@ export async function GET(req: NextRequest) {
       } catch { /* skip */ }
 
       const decimals = meta.decimals || 18;
+      const symbol = meta.symbol || "???";
+      tokenSymbols.push(symbol);
+
       tokenBalances.push({
         contractAddress: tb.contractAddress,
         name: meta.name || "Unknown",
-        symbol: meta.symbol || "???",
+        symbol,
         logo: meta.logo || null,
         balance: tb.tokenBalance,
         balanceFormatted: rawBalance / Math.pow(10, decimals),
@@ -63,6 +70,33 @@ export async function GET(req: NextRequest) {
         valueUsd: null,
       });
     }
+
+    // Fetch prices from CoinGecko
+    const coinGeckoIds: string[] = [getChainCoinGeckoId(chain)]; // native token price
+    for (const symbol of tokenSymbols) {
+      const id = getCoinGeckoId(symbol);
+      if (id) coinGeckoIds.push(id);
+    }
+
+    const prices = await getPrices(coinGeckoIds);
+
+    // Calculate native token USD value
+    const nativePriceId = getChainCoinGeckoId(chain);
+    const nativePriceUsd = prices[nativePriceId] || 0;
+    const ethBalanceUsd = ethBalance * nativePriceUsd;
+
+    // Calculate token USD values
+    let totalTokenValueUsd = 0;
+    for (const token of tokenBalances) {
+      const cgId = getCoinGeckoId(token.symbol);
+      if (cgId && prices[cgId]) {
+        token.priceUsd = prices[cgId];
+        token.valueUsd = token.balanceFormatted * prices[cgId];
+        totalTokenValueUsd += token.valueUsd;
+      }
+    }
+
+    const totalValueUsd = ethBalanceUsd + totalTokenValueUsd;
 
     // Process ALL transfers for transaction analysis
     const allTransfers: any[] = [...(allTransfersOut || []), ...(allTransfersIn || [])];
@@ -146,13 +180,14 @@ export async function GET(req: NextRequest) {
       address: addr,
       ensName: null,
       ethBalance,
-      ethBalanceUsd: 0,
+      ethBalanceUsd,
       tokenBalances: tokenBalances.slice(0, 50),
-      totalValueUsd: 0,
+      totalValueUsd,
       transactionCount: transactions.length,
       transactions: transactions.slice(0, 100),
       pattern,
       chain,
+      explorerUrl,
     };
 
     return NextResponse.json(profile);

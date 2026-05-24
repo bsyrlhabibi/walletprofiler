@@ -1,7 +1,7 @@
 "use client";
 
 import { TradingPattern } from "@/lib/types";
-import { TrendingUp, Flame, Zap, Copy, Check, Layers, Link2 } from "lucide-react";
+import { TrendingUp, Flame, Zap, Copy, Check, Layers, Link2, ExternalLink } from "lucide-react";
 
 const CHAIN_LABELS: Record<string, { name: string; icon: string; color: string; currency: string }> = {
   eth: { name: "Ethereum", icon: "⟠", color: "bg-indigo-100 text-indigo-700", currency: "ETH" },
@@ -18,9 +18,12 @@ interface PersonaCardProps {
   ethBalance: number;
   totalTokens: number;
   chain?: string;
+  totalValueUsd?: number;
+  ethBalanceUsd?: number;
+  explorerUrl?: string;
 }
 
-export default function PersonaCard({ pattern, address, ethBalance, totalTokens, chain }: PersonaCardProps) {
+export default function PersonaCard({ pattern, address, ethBalance, totalTokens, chain, totalValueUsd, ethBalanceUsd, explorerUrl }: PersonaCardProps) {
   const [copied, setCopied] = useState(false);
 
   const copyAddr = () => {
@@ -81,9 +84,22 @@ export default function PersonaCard({ pattern, address, ethBalance, totalTokens,
             <span className="text-xs text-gray-400 flex-shrink-0">Address</span>
             <span className="font-mono text-sm text-gray-700 truncate">{address}</span>
           </div>
-          <button onClick={copyAddr} className="text-gray-400 hover:text-fuchsia-500 transition ml-2 flex-shrink-0">
-            {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
-          </button>
+          <div className="flex items-center gap-2 ml-2 flex-shrink-0">
+            <button onClick={copyAddr} className="text-gray-400 hover:text-fuchsia-500 transition">
+              {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
+            </button>
+            {explorerUrl && (
+              <a
+                href={`https://${explorerUrl}/address/${address}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-fuchsia-500 transition"
+                title={`View on ${explorerUrl}`}
+              >
+                <ExternalLink className="w-4 h-4" />
+              </a>
+            )}
+          </div>
         </div>
 
         {/* Activity bar */}
@@ -99,6 +115,28 @@ export default function PersonaCard({ pattern, address, ethBalance, totalTokens,
             <span className="text-[10px] text-gray-400">Whale Degen 🐋</span>
           </div>
         </div>
+
+        {/* Total USD Value */}
+        {totalValueUsd !== undefined && totalValueUsd > 0 && (
+          <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl p-4 mb-4 border border-emerald-100">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-xs text-emerald-600 font-medium mb-1">Total Portfolio Value</div>
+                <div className="text-3xl font-black text-emerald-700">
+                  ${totalValueUsd.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </div>
+              </div>
+              {ethBalanceUsd !== undefined && ethBalanceUsd > 0 && (
+                <div className="text-right">
+                  <div className="text-xs text-emerald-500">Native Token</div>
+                  <div className="text-sm font-semibold text-emerald-600">
+                    ${ethBalanceUsd.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Stats grid */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">

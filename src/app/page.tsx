@@ -219,6 +219,9 @@ export default function Home() {
               ethBalance={profile.ethBalance}
               totalTokens={profile.tokenBalances.length}
               chain={currentChain}
+              totalValueUsd={profile.totalValueUsd}
+              ethBalanceUsd={profile.ethBalanceUsd}
+              explorerUrl={profile.explorerUrl}
             />
 
             {/* Grid: Heatmaps + Risk */}
@@ -244,8 +247,10 @@ export default function Home() {
                 tokens={profile.tokenBalances}
                 ethBalance={profile.ethBalance}
                 chain={currentChain}
+                explorerUrl={profile.explorerUrl}
+                nativePriceUsd={profile.ethBalanceUsd / profile.ethBalance || 0}
               />
-              <TxTimeline transactions={profile.transactions} currency={chainCurrency[currentChain] || "ETH"} />
+              <TxTimeline transactions={profile.transactions} currency={chainCurrency[currentChain] || "ETH"} explorerUrl={profile.explorerUrl} />
             </div>
 
             {/* Footer */}
