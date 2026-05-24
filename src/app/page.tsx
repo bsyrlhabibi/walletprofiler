@@ -214,7 +214,8 @@ export default function Home() {
                   <button
                     key={ex.label}
                     onClick={() => handleSearch(ex.addr, ex.chain)}
-                    className="text-sm text-fuchsia-600 dark:text-fuchsia-400 hover:text-fuchsia-700 bg-white hover:bg-fuchsia-50 dark:bg-gray-800 dark:hover:bg-fuchsia-950 px-4 py-2 rounded-xl transition font-medium border border-gray-200 dark:border-fuchsia-900 hover:border-fuchsia-300 shadow-sm hover:shadow-md"
+                    className="text-sm text-fuchsia-600 dark:text-fuchsia-400 hover:text-fuchsia-700 hover:bg-fuchsia-50 dark:hover:bg-fuchsia-950 px-4 py-2 rounded-xl transition font-medium border border-gray-200 dark:border-fuchsia-900 hover:border-fuchsia-300 shadow-sm hover:shadow-md"
+                    style={{ backgroundColor: 'var(--header-bg)' }}
                   >
                     {ex.label}
                   </button>
