@@ -26,7 +26,7 @@ export default function ChainTabs({ activeChain, onChainChange, loading }: Chain
           className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold border transition-all flex-shrink-0 ${
             c.id === activeChain
               ? `${c.color} ring-2 ring-offset-1 ring-fuchsia-300 shadow-md`
-              : "bg-white text-gray-500 border-gray-200 hover:bg-gray-50 hover:text-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700 dark:hover:bg-gray-700 dark:hover:text-gray-200"
+              : "bg-white text-gray-500 border-gray-200 hover:bg-gray-50 hover:text-gray-700"
           } ${loading ? "opacity-50 cursor-not-allowed" : "cursor-pointer active:scale-95"}`}
         >
           <span>{c.icon}</span>

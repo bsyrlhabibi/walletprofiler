@@ -11,7 +11,6 @@ import TrustActivityPanel from "@/components/trust-activity-panel";
 import PortfolioPieChart from "@/components/portfolio-pie-chart";
 import { WalletProfile } from "@/lib/types";
 import { Sparkles, Zap, Shield, BarChart3, AlertTriangle, ArrowLeft, Wallet } from "lucide-react";
-import ThemeToggle from "@/components/theme-toggle";
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -114,7 +113,7 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="sticky top-0 z-50 shadow-md" style={{ backgroundColor: 'var(--header-bg)', borderBottom: '1px solid var(--header-border)' }}>
+      <header className="sticky top-0 z-50 bg-white shadow-md border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <button onClick={goHome} className="flex items-center gap-2.5 hover:opacity-80 transition">
             <WalletLogo size={34} />
@@ -166,7 +165,6 @@ export default function Home() {
               <img src="https://basescan.org/assets/base/images/favicon.ico" alt="BASE" className="w-4 h-4 rounded-sm" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
               <span className="text-xs">BaseScan</span>
             </a>
-            <ThemeToggle />
           </nav>
 
           {/* Mobile back button */}
@@ -352,9 +350,9 @@ export default function Home() {
           </div>
         )}
           {/* Universal Footer */}
-          <footer className="border-t border-gray-200 dark:border-gray-800 mt-6 py-8 space-y-3">
+          <footer className="border-t border-gray-200 mt-6 py-8 space-y-3">
             <div className="flex items-center justify-center gap-2 text-xs text-gray-400">
-              <span className="bg-white/60 px-4 py-2 rounded-full border border-gray-100 dark:bg-gray-800/60 dark:border-gray-800">
+              <span className="bg-white/60 px-4 py-2 rounded-full border border-gray-100">
                 Powered by Alchemy{profile ? ` • ${analyzedChain === "eth" ? "Ethereum" : analyzedChain === "polygon" ? "Polygon" : analyzedChain === "arbitrum" ? "Arbitrum" : analyzedChain === "optimism" ? "Optimism" : analyzedChain === "bnb" ? "BNB Chain" : "Base"} mainnet • ${profile.pattern.totalTransactions} transactions analyzed` : " • On-Chain Intelligence"}
               </span>
             </div>

@@ -74,7 +74,7 @@ export default function SearchBar({ onSearch, loading, chain: chainProp, onChain
               </button>
 
               {showChains && (
-                <div className="absolute top-full left-0 mt-1 bg-white dark:bg-gray-900 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 py-1 z-[200] min-w-[160px] animate-fade-in max-h-[180px] overflow-y-auto scrollbar-thin">
+                <div className="absolute top-full left-0 mt-1 bg-white rounded-xl shadow-2xl border border-gray-200 py-1 z-[200] min-w-[160px] animate-fade-in max-h-[180px] overflow-y-auto scrollbar-thin">
                   {CHAINS.map((c) => (
                     <button
                       key={c.id}
@@ -85,8 +85,8 @@ export default function SearchBar({ onSearch, loading, chain: chainProp, onChain
                         onChainChange?.(c.id);
                         setShowChains(false);
                       }}
-                      className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition cursor-pointer ${
-                        c.id === chain ? "font-bold text-fuchsia-600 bg-fuchsia-50 dark:bg-fuchsia-950" : "text-gray-600 dark:text-gray-300"
+                      className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-gray-50 transition cursor-pointer ${
+                        c.id === chain ? "font-bold text-fuchsia-600 bg-fuchsia-50" : "text-gray-600"
                       }`}
                     >
                       <span className="w-5 text-center text-base flex-shrink-0">{c.icon}</span>
@@ -99,9 +99,9 @@ export default function SearchBar({ onSearch, loading, chain: chainProp, onChain
             </div>
           )}
 
-          {/* Search icon */}
-          <div className={`${showChainSelector ? "ml-2" : "ml-4"} p-2 rounded-xl bg-fuchsia-50 dark:bg-fuchsia-950 flex-shrink-0`}>
-            <Search className="w-5 h-5 text-fuchsia-500" />
+          {/* Search icon with gradient background */}
+          <div className={`${showChainSelector ? "ml-2" : "ml-4"} p-2 rounded-xl bg-gradient-to-br from-fuchsia-500 via-purple-500 to-indigo-500 flex-shrink-0 shadow-md shadow-fuchsia-300/40`}>
+            <Search className="w-5 h-5 text-white" />
           </div>
 
           {/* Input */}
@@ -110,7 +110,7 @@ export default function SearchBar({ onSearch, loading, chain: chainProp, onChain
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Enter wallet address (0x...)"
-            className="flex-1 bg-transparent text-gray-800 dark:text-gray-100 px-2 sm:px-4 py-3 sm:py-4 outline-none placeholder:text-gray-400 dark:placeholder:text-gray-500 font-mono text-xs sm:text-sm min-w-0"
+            className="flex-1 bg-transparent text-gray-800 px-2 sm:px-4 py-3 sm:py-4 outline-none placeholder:text-gray-400 font-mono text-xs sm:text-sm min-w-0"
             disabled={loading}
           />
 
@@ -136,7 +136,7 @@ export default function SearchBar({ onSearch, loading, chain: chainProp, onChain
       </div>
 
       {showChainSelector && (
-        <p className="text-center text-gray-400 dark:text-gray-500 text-xs mt-4">
+        <p className="text-center text-gray-400 text-xs mt-4">
           Supports Ethereum, Polygon, Arbitrum, Optimism, and Base
         </p>
       )}

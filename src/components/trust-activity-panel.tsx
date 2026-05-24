@@ -38,7 +38,7 @@ export default function TrustActivityPanel({ pattern }: TrustActivityPanelProps)
       {/* Header */}
       <div className="flex items-center gap-2">
         <Activity className="w-4 h-4 text-fuchsia-500" />
-        <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-300">Wallet Intelligence</h3>
+        <h3 className="text-sm font-semibold text-gray-600">Wallet Intelligence</h3>
       </div>
 
       {/* Activity Score */}
@@ -46,19 +46,19 @@ export default function TrustActivityPanel({ pattern }: TrustActivityPanelProps)
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <Zap className="w-4 h-4 text-amber-500" />
-            <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">Activity Score</span>
+            <span className="text-sm font-semibold text-gray-700">Activity Score</span>
           </div>
           <span className="text-2xl font-black bg-gradient-to-r from-fuchsia-500 to-purple-600 bg-clip-text text-transparent">
             {pattern.activityScore}
           </span>
         </div>
-        <div className="h-2.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden mb-2">
+        <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden mb-2">
           <div
             className={`h-full bg-gradient-to-r ${getBarColor(pattern.activityScore, "activity")} rounded-full transition-all duration-1000`}
             style={{ width: `${pattern.activityScore}%` }}
           />
         </div>
-        <div className="flex justify-between text-[10px] text-gray-400 dark:text-gray-500 mb-2">
+        <div className="flex justify-between text-[10px] text-gray-400 mb-2">
           <span>Quiet</span>
           <span>Hyperactive</span>
         </div>
@@ -67,21 +67,21 @@ export default function TrustActivityPanel({ pattern }: TrustActivityPanelProps)
           {pattern.activityFactors.slice(0, 3).map((f, i) => (
             <div key={i} className="flex items-start gap-2 bg-fuchsia-50/50 rounded-lg px-3 py-1.5">
               <TrendingUp className="w-3 h-3 text-fuchsia-400 mt-0.5 flex-shrink-0" />
-              <span className="text-xs text-gray-500 dark:text-gray-400">{f}</span>
+              <span className="text-xs text-gray-500">{f}</span>
             </div>
           ))}
         </div>
       </div>
 
       {/* Divider */}
-      <div className="border-t border-gray-100 dark:border-gray-800" />
+      <div className="border-t border-gray-100" />
 
       {/* Trust Score */}
       <div>
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <Shield className="w-4 h-4 text-emerald-500" />
-            <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">Trust Score</span>
+            <span className="text-sm font-semibold text-gray-700">Trust Score</span>
           </div>
           <div className="flex items-center gap-2">
             <span className={`text-xs px-2 py-0.5 rounded-full font-semibold border ${trust.bg} ${trust.color}`}>
@@ -92,13 +92,13 @@ export default function TrustActivityPanel({ pattern }: TrustActivityPanelProps)
             </span>
           </div>
         </div>
-        <div className="h-2.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden mb-2">
+        <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden mb-2">
           <div
             className={`h-full bg-gradient-to-r ${getBarColor(pattern.trustScore, "trust")} rounded-full transition-all duration-1000`}
             style={{ width: `${pattern.trustScore}%` }}
           />
         </div>
-        <div className="flex justify-between text-[10px] text-gray-400 dark:text-gray-500 mb-2">
+        <div className="flex justify-between text-[10px] text-gray-400 mb-2">
           <span>Risky</span>
           <span>Fully Trusted</span>
         </div>
@@ -118,7 +118,7 @@ export default function TrustActivityPanel({ pattern }: TrustActivityPanelProps)
                 ) : (
                   <CheckCircle className="w-3 h-3 text-emerald-400 mt-0.5 flex-shrink-0" />
                 )}
-                <span className="text-xs text-gray-500 dark:text-gray-400">{f}</span>
+                <span className="text-xs text-gray-500">{f}</span>
               </div>
             );
           })}
