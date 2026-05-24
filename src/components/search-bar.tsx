@@ -6,6 +6,8 @@ import { Search, Loader2, Sparkles, ChevronDown } from "lucide-react";
 interface SearchBarProps {
   onSearch: (address: string, chain: string) => void;
   loading: boolean;
+  chain?: string;
+  onChainChange?: (chain: string) => void;
 }
 
 const CHAINS = [
@@ -16,12 +18,12 @@ const CHAINS = [
   { id: "base", label: "Base", icon: "🔷", color: "bg-sky-50 text-sky-600 border-sky-200" },
 ];
 
-export default function SearchBar({ onSearch, loading }: SearchBarProps) {
+export default function SearchBar({ onSearch, loading, chain: chainProp, onChainChange }: SearchBarProps) {
   const [input, setInput] = useState("");
-  const [chain, setChain] = useState("eth");
   const [showChains, setShowChains] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  const chain = chainProp || "eth";
   const selectedChain = CHAINS.find((c) => c.id === chain) || CHAINS[0];
 
   // Close dropdown on click outside
@@ -53,7 +55,7 @@ export default function SearchBar({ onSearch, loading }: SearchBarProps) {
 
         {/* Input container */}
         <div className="relative flex items-center glass-card rounded-2xl">
-          {/* Chain selector — positioned outside overflow */}
+          {/* Chain selector */}
           <div ref={dropdownRef} className="relative ml-2 flex-shrink-0">
             <button
               type="button"
@@ -79,7 +81,7 @@ export default function SearchBar({ onSearch, loading }: SearchBarProps) {
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      setChain(c.id);
+                      onChainChange?.(c.id);
                       setShowChains(false);
                     }}
                     className={`w-full flex items-center gap-2.5 px-4 py-2.5 text-sm hover:bg-gray-50 transition cursor-pointer ${

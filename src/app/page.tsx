@@ -133,7 +133,7 @@ export default function Home() {
               </p>
             </div>
 
-            <SearchBar onSearch={handleSearch} loading={loading} />
+            <SearchBar onSearch={handleSearch} loading={loading} chain={currentChain} onChainChange={setCurrentChain} />
 
             {/* Example wallets */}
             <div className="mt-10 text-center">
@@ -210,7 +210,7 @@ export default function Home() {
         {profile && !loading && (
           <div className="space-y-5">
             {/* Search bar (persistent) */}
-            <SearchBar onSearch={handleSearch} loading={loading} />
+            <SearchBar onSearch={handleSearch} loading={loading} chain={currentChain} onChainChange={setCurrentChain} />
 
             {/* Persona Card */}
             <PersonaCard
