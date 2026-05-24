@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import SearchBar from "@/components/search-bar";
+import ChainTabs from "@/components/chain-tabs";
 import PersonaCard from "@/components/persona-card";
 import ActivityHeatmap from "@/components/activity-heatmap";
 import TokenHoldings from "@/components/token-holdings";
@@ -30,6 +31,7 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [currentChain, setCurrentChain] = useState("eth");
   const [analyzedChain, setAnalyzedChain] = useState("eth");
+  const [analyzedAddress, setAnalyzedAddress] = useState<string | null>(null);
   const chainCurrency: Record<string, string> = { eth: "ETH", polygon: "MATIC", arbitrum: "ETH", optimism: "ETH", base: "ETH" };
 
   const handleSearch = async (address: string, chain: string = "eth") => {
@@ -38,6 +40,7 @@ export default function Home() {
     setProfile(null);
     setCurrentChain(chain);
     setAnalyzedChain(chain);
+    setAnalyzedAddress(address);
 
     try {
       const res = await fetch(`/api/wallet?address=${address}&chain=${chain}`);
@@ -55,10 +58,21 @@ export default function Home() {
     }
   };
 
+  // Switch chain and auto-re-analyze same address
+  const handleChainSwitch = (chain: string) => {
+    if (chain === analyzedChain) return;
+    if (analyzedAddress) {
+      handleSearch(analyzedAddress, chain);
+    } else {
+      setCurrentChain(chain);
+    }
+  };
+
   const goHome = () => {
     setProfile(null);
     setError(null);
     setLoading(false);
+    setAnalyzedAddress(null);
   };
 
   return (
@@ -87,7 +101,7 @@ export default function Home() {
               </button>
             )}
             <a
-              href="https://etherscan.io"
+              href={`https://${profile?.explorerUrl || "etherscan.io"}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-fuchsia-600 px-3 py-1.5 rounded-lg hover:bg-fuchsia-50 transition font-medium"
@@ -132,11 +146,12 @@ export default function Home() {
                 <span className="gradient-text">WalletProfiler</span>
               </h1>
               <p className="text-gray-500 max-w-lg mx-auto text-base leading-relaxed">
-                Paste any Ethereum address to get a full on-chain intelligence report — persona, risk score, trading patterns, and more.
+                Paste any EVM address to get a full on-chain intelligence report — persona, activity score, trading patterns, and more.
               </p>
             </div>
 
-            <SearchBar onSearch={handleSearch} loading={loading} chain={currentChain} onChainChange={setCurrentChain} />
+            {/* Search with chain dropdown */}
+            <SearchBar onSearch={handleSearch} loading={loading} chain={currentChain} onChainChange={setCurrentChain} showChainSelector={true} />
 
             {/* Example wallets */}
             <div className="mt-10 text-center">
@@ -212,8 +227,11 @@ export default function Home() {
         {/* Profile Dashboard */}
         {profile && !loading && (
           <div className="space-y-5">
-            {/* Search bar (persistent) */}
-            <SearchBar onSearch={handleSearch} loading={loading} chain={currentChain} onChainChange={setCurrentChain} />
+            {/* Search bar (no dropdown) + Chain tabs */}
+            <div className="space-y-3">
+              <SearchBar onSearch={handleSearch} loading={loading} chain={analyzedChain} showChainSelector={false} />
+              <ChainTabs activeChain={analyzedChain} onChainChange={handleChainSwitch} loading={loading} />
+            </div>
 
             {/* Persona Card */}
             <PersonaCard
@@ -221,13 +239,13 @@ export default function Home() {
               address={profile.address}
               ethBalance={profile.ethBalance}
               totalTokens={profile.tokenBalances.length}
+              chain={analyzedChain}
               totalValueUsd={profile.totalValueUsd}
               ethBalanceUsd={profile.ethBalanceUsd}
               explorerUrl={profile.explorerUrl}
               walletLabel={profile.walletLabel}
               walletType={profile.walletType}
               walletTag={profile.walletTag}
-              chain={analyzedChain}
             />
 
             {/* Grid: Heatmaps + Risk */}

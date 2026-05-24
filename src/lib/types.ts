@@ -18,6 +18,7 @@ export interface Transaction {
   valueFormatted: number;
   timestamp: number;
   method: string;
+  description?: string;
   status: "success" | "failed";
   gasUsed: string;
   gasPrice: string;

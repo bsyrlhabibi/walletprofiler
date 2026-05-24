@@ -8,6 +8,7 @@ interface SearchBarProps {
   loading: boolean;
   chain?: string;
   onChainChange?: (chain: string) => void;
+  showChainSelector?: boolean;
 }
 
 const CHAINS = [
@@ -18,7 +19,7 @@ const CHAINS = [
   { id: "base", label: "Base", icon: "🔷", color: "bg-sky-50 text-sky-600 border-sky-200" },
 ];
 
-export default function SearchBar({ onSearch, loading, chain: chainProp, onChainChange }: SearchBarProps) {
+export default function SearchBar({ onSearch, loading, chain: chainProp, onChainChange, showChainSelector = true }: SearchBarProps) {
   const [input, setInput] = useState("");
   const [showChains, setShowChains] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -26,7 +27,6 @@ export default function SearchBar({ onSearch, loading, chain: chainProp, onChain
   const chain = chainProp || "eth";
   const selectedChain = CHAINS.find((c) => c.id === chain) || CHAINS[0];
 
-  // Close dropdown on click outside
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
@@ -55,50 +55,51 @@ export default function SearchBar({ onSearch, loading, chain: chainProp, onChain
 
         {/* Input container */}
         <div className="relative flex items-center glass-card rounded-2xl">
-          {/* Chain selector */}
-          <div ref={dropdownRef} className="relative ml-2 flex-shrink-0">
-            <button
-              type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setShowChains(!showChains);
-              }}
-              className={`flex items-center gap-1 px-3 py-2.5 rounded-xl text-xs font-semibold border transition cursor-pointer hover:opacity-80 active:scale-95 ${selectedChain.color}`}
-            >
-              <span className="text-base">{selectedChain.icon}</span>
-              <span className="hidden sm:inline">{selectedChain.label}</span>
-              <ChevronDown className={`w-3 h-3 transition-transform ${showChains ? "rotate-180" : ""}`} />
-            </button>
+          {/* Chain selector (optional) */}
+          {showChainSelector && (
+            <div ref={dropdownRef} className="relative ml-2 flex-shrink-0">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setShowChains(!showChains);
+                }}
+                className={`flex items-center gap-1 px-3 py-2.5 rounded-xl text-xs font-semibold border transition cursor-pointer hover:opacity-80 active:scale-95 ${selectedChain.color}`}
+              >
+                <span className="text-base">{selectedChain.icon}</span>
+                <span className="hidden sm:inline">{selectedChain.label}</span>
+                <ChevronDown className={`w-3 h-3 transition-transform ${showChains ? "rotate-180" : ""}`} />
+              </button>
 
-            {/* Dropdown menu */}
-            {showChains && (
-              <div className="absolute top-full left-0 mt-2 bg-white rounded-xl shadow-2xl border border-gray-200 py-1 z-[100] min-w-[160px] animate-fade-in">
-                {CHAINS.map((c) => (
-                  <button
-                    key={c.id}
-                    type="button"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      onChainChange?.(c.id);
-                      setShowChains(false);
-                    }}
-                    className={`w-full flex items-center gap-2.5 px-4 py-2.5 text-sm hover:bg-gray-50 transition cursor-pointer ${
-                      c.id === chain ? "font-bold text-fuchsia-600 bg-fuchsia-50" : "text-gray-600"
-                    }`}
-                  >
-                    <span className="text-base">{c.icon}</span>
-                    {c.label}
-                    {c.id === chain && <span className="ml-auto text-fuchsia-500">✓</span>}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+              {showChains && (
+                <div className="absolute top-full left-0 mt-2 bg-white rounded-xl shadow-2xl border border-gray-200 py-1 z-[100] min-w-[160px] animate-fade-in">
+                  {CHAINS.map((c) => (
+                    <button
+                      key={c.id}
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        onChainChange?.(c.id);
+                        setShowChains(false);
+                      }}
+                      className={`w-full flex items-center gap-2.5 px-4 py-2.5 text-sm hover:bg-gray-50 transition cursor-pointer ${
+                        c.id === chain ? "font-bold text-fuchsia-600 bg-fuchsia-50" : "text-gray-600"
+                      }`}
+                    >
+                      <span className="text-base">{c.icon}</span>
+                      {c.label}
+                      {c.id === chain && <span className="ml-auto text-fuchsia-500">✓</span>}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Search icon */}
-          <div className="ml-2 p-2 rounded-xl bg-fuchsia-50 flex-shrink-0">
+          <div className={`${showChainSelector ? "ml-2" : "ml-4"} p-2 rounded-xl bg-fuchsia-50 flex-shrink-0`}>
             <Search className="w-5 h-5 text-fuchsia-500" />
           </div>
 
@@ -133,9 +134,11 @@ export default function SearchBar({ onSearch, loading, chain: chainProp, onChain
         </div>
       </div>
 
-      <p className="text-center text-gray-400 text-xs mt-4">
-        Supports Ethereum, Polygon, Arbitrum, Optimism, and Base
-      </p>
+      {showChainSelector && (
+        <p className="text-center text-gray-400 text-xs mt-4">
+          Supports Ethereum, Polygon, Arbitrum, Optimism, and Base
+        </p>
+      )}
     </form>
   );
 }
