@@ -136,10 +136,12 @@ export default function TxTimeline({ transactions, currency = "ETH", explorerUrl
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className="text-right">
+                <div className="text-right min-w-[80px]">
                   <div className={`text-sm font-mono font-semibold ${getDirectionColor(tx.direction)}`}>
                     {tx.direction === "in" ? "+" : "−"}{value} {token}
                   </div>
+                </div>
+                <div className="text-right min-w-[70px]">
                   <div className="text-xs text-gray-400">{formatTime(tx.timestamp)}</div>
                 </div>
                 <ExternalLink className="w-3.5 h-3.5 text-gray-300 group-hover:text-fuchsia-400 transition" />
