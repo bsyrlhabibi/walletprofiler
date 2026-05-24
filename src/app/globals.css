@@ -13,11 +13,18 @@
   --gradient-end: #764ba2;
 }
 
+:root {
+  --header-bg: #ffffff;
+  --header-border: #e5e7eb;
+}
+
 .dark {
   --background: #0f0f1a;
   --foreground: #e2e8f0;
   --card-bg: rgba(30, 30, 50, 0.85);
   --card-border: rgba(99, 102, 241, 0.15);
+  --header-bg: #030712;
+  --header-border: #1f2937;
 }
 
 @theme inline {

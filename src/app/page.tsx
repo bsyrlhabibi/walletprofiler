@@ -114,7 +114,7 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 sticky top-0 z-50 shadow-sm">
+      <header className="sticky top-0 z-50 shadow-md" style={{ backgroundColor: 'var(--header-bg)', borderBottom: '1px solid var(--header-border)' }}>
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <button onClick={goHome} className="flex items-center gap-2.5 hover:opacity-80 transition">
             <WalletLogo size={34} />
@@ -277,7 +277,7 @@ export default function Home() {
         {profile && !loading && (
           <div className="space-y-5">
             {/* Search bar (no dropdown) + Chain tabs */}
-            <div className="space-y-3">
+            <div className="space-y-4">
               <SearchBar onSearch={handleSearch} loading={loading} chain={analyzedChain} showChainSelector={false} />
               <ChainTabs activeChain={analyzedChain} onChainChange={handleChainSwitch} loading={loading} />
             </div>
