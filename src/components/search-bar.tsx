@@ -88,8 +88,8 @@ export default function SearchBar({ onSearch, loading, chain: chainProp, onChain
                         c.id === chain ? "font-bold text-fuchsia-600 bg-fuchsia-50" : "text-gray-600"
                       }`}
                     >
-                      <span className="text-base">{c.icon}</span>
-                      {c.label}
+                      <span className="w-5 text-center text-base flex-shrink-0">{c.icon}</span>
+                      <span className="flex-1 text-left">{c.label}</span>
                       {c.id === chain && <span className="ml-auto text-fuchsia-500">✓</span>}
                     </button>
                   ))}
