@@ -177,7 +177,7 @@ export default function Home() {
               <div className="flex items-center justify-center gap-3 mb-5">
                 <WalletLogo size={56} />
               </div>
-              <h1 className="text-5xl font-black mb-3">
+              <h1 className="text-3xl sm:text-5xl font-black mb-3">
                 <span className="gradient-text">WalletProfiler</span>
               </h1>
               <p className="text-gray-500 max-w-lg mx-auto text-base leading-relaxed">

@@ -110,7 +110,7 @@ export default function SearchBar({ onSearch, loading, chain: chainProp, onChain
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Enter wallet address (0x...)"
-            className="flex-1 bg-transparent text-gray-800 px-4 py-4 outline-none placeholder:text-gray-400 font-mono text-sm min-w-0"
+            className="flex-1 bg-transparent text-gray-800 px-2 sm:px-4 py-3 sm:py-4 outline-none placeholder:text-gray-400 font-mono text-xs sm:text-sm min-w-0"
             disabled={loading}
           />
 
@@ -118,7 +118,7 @@ export default function SearchBar({ onSearch, loading, chain: chainProp, onChain
           <button
             type="submit"
             disabled={loading || !input.trim()}
-            className="mr-2 px-5 py-2.5 bg-gradient-to-r from-fuchsia-500 to-purple-600 text-white rounded-xl font-semibold text-sm hover:from-fuchsia-400 hover:to-purple-500 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center gap-2 shadow-lg shadow-fuchsia-500/20 flex-shrink-0"
+            className="mr-2 px-3 sm:px-5 py-2 sm:py-2.5 bg-gradient-to-r from-fuchsia-500 to-purple-600 text-white rounded-xl font-semibold text-xs sm:text-sm hover:from-fuchsia-400 hover:to-purple-500 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center gap-1.5 sm:gap-2 shadow-lg shadow-fuchsia-500/20 flex-shrink-0"
           >
             {loading ? (
               <>

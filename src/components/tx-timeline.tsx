@@ -120,11 +120,11 @@ export default function TxTimeline({ transactions, currency = "ETH", explorerUrl
             <option value="in">In</option>
             <option value="out">Out</option>
           </select>
-          <span>Type</span>
+          <span className="hidden sm:inline">Type</span>
         </div>
-        <div className="w-[110px] text-center flex-shrink-0">Amount</div>
-        <div className="w-[90px] text-right flex-shrink-0">Age</div>
-        <div className="w-[20px] flex-shrink-0"></div>
+        <div className="w-[90px] sm:w-[110px] text-center flex-shrink-0">Amount</div>
+        <div className="hidden sm:block w-[90px] text-right flex-shrink-0">Age</div>
+        <div className="hidden sm:block w-[20px] flex-shrink-0"></div>
       </div>
 
       {/* Transaction list */}
@@ -154,23 +154,23 @@ export default function TxTimeline({ transactions, currency = "ETH", explorerUrl
                     <span className="text-xs font-semibold text-gray-700 bg-gray-100 px-1.5 py-0.5 rounded">
                       {token}
                     </span>
-                    {badge}
+                    <span className="hidden sm:inline">{badge}</span>
                   </div>
-                  <div className="text-xs text-gray-400 font-mono mt-0.5">
+                  <div className="hidden sm:block text-xs text-gray-400 font-mono mt-0.5">
                     {tx.direction === "in" ? `from ${shortenAddr(tx.from)}` : `to ${shortenAddr(tx.to)}`}
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="w-[110px] text-right flex-shrink-0">
-                  <div className={`text-sm font-mono font-semibold ${getDirectionColor(tx.direction)}`}>
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="w-[90px] sm:w-[110px] text-right flex-shrink-0">
+                  <div className={`text-xs sm:text-sm font-mono font-semibold ${getDirectionColor(tx.direction)}`}>
                     {tx.direction === "in" ? "+" : "−"}{value} {token}
                   </div>
                 </div>
-                <div className="w-[90px] text-right flex-shrink-0">
+                <div className="hidden sm:block w-[90px] text-right flex-shrink-0">
                   <div className="text-xs text-gray-400">{formatTime(tx.timestamp)}</div>
                 </div>
-                <ExternalLink className="w-3.5 h-3.5 text-gray-300 group-hover:text-fuchsia-400 transition" />
+                <ExternalLink className="hidden sm:block w-3.5 h-3.5 text-gray-300 group-hover:text-fuchsia-400 transition" />
               </div>
             </a>
           );

@@ -37,7 +37,7 @@ export default function TokenHoldings({ tokens, ethBalance, chain, explorerUrl =
   const nativeUsd = nativePriceUsd && nativePriceUsd > 0 ? ethBalance * nativePriceUsd : null;
 
   return (
-    <div className="glass-card p-4 animate-fade-in animate-fade-in-delay-2 min-h-[400px]">
+    <div className="glass-card p-3 sm:p-4 animate-fade-in animate-fade-in-delay-2 min-h-[300px] sm:min-h-[400px]">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-semibold text-gray-600 flex items-center gap-2">
           <Coins className="w-4 h-4 text-amber-500" />
@@ -48,9 +48,9 @@ export default function TokenHoldings({ tokens, ethBalance, chain, explorerUrl =
         </span>
       </div>
 
-      <div className="space-y-1.5 max-h-[430px] overflow-y-auto pr-1 scrollbar-thin bg-white rounded-xl">
+      <div className="space-y-1 sm:space-y-1.5 max-h-[340px] sm:max-h-[430px] overflow-y-auto pr-1 scrollbar-thin bg-white rounded-xl">
         {/* Native token (ETH/MATIC) */}
-        <div className="flex items-center justify-between py-2.5 px-3 bg-blue-50 rounded-xl border border-gray-200 hover:bg-blue-100 transition sticky top-0 z-10 shadow-sm">
+        <div className="flex items-center justify-between py-2 px-2.5 sm:py-2.5 sm:px-3 bg-blue-50 rounded-xl border border-gray-200 hover:bg-blue-100 transition sticky top-0 z-10 shadow-sm">
           <div className="flex items-center gap-3">
             <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${native.color} flex items-center justify-center overflow-hidden shadow-md shadow-blue-200`}>
               <img src={CHAIN_NATIVE_LOGOS[chain || "eth"] || CHAIN_NATIVE_LOGOS.eth} alt={native.symbol} className="w-full h-full object-cover rounded-xl" />
@@ -85,7 +85,7 @@ export default function TokenHoldings({ tokens, ethBalance, chain, explorerUrl =
           return (
             <div
               key={token.contractAddress}
-              className="flex items-center justify-between py-2.5 px-3 rounded-xl border border-gray-100 bg-white hover:border-gray-200 hover:bg-gray-50 transition group" 
+              className="flex items-center justify-between py-2 px-2.5 sm:py-2.5 sm:px-3 rounded-xl border border-gray-100 bg-white hover:border-gray-200 hover:bg-gray-50 transition group" 
             >
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-xs overflow-hidden shadow-sm">
@@ -96,7 +96,7 @@ export default function TokenHoldings({ tokens, ethBalance, chain, explorerUrl =
                   )}
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-gray-700 truncate max-w-[120px]">{token.name}</div>
+                  <div className="text-xs sm:text-sm font-medium text-gray-700 truncate max-w-[80px] sm:max-w-[120px]">{token.name}</div>
                   <div className="text-xs text-gray-400">{token.symbol} · {displayBalance}</div>
                 </div>
               </div>

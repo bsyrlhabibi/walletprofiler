@@ -17,7 +17,7 @@ const CHAINS = [
 
 export default function ChainTabs({ activeChain, onChainChange, loading }: ChainTabsProps) {
   return (
-    <div className="flex items-center gap-2 flex-wrap">
+    <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-thin">
       {CHAINS.map((c) => (
         <button
           key={c.id}

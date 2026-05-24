@@ -45,7 +45,7 @@ export default function PersonaCard({ pattern, address, ethBalance, totalTokens,
   };
 
   return (
-    <div className="glass-card p-6 animate-fade-in relative overflow-hidden">
+    <div className="glass-card p-4 sm:p-6 animate-fade-in relative overflow-hidden">
       {/* Decorative blobs */}
       <div className="absolute -top-20 -right-20 w-60 h-60 bg-gradient-to-br from-fuchsia-200/30 to-purple-200/20 rounded-full blur-3xl" />
       <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-gradient-to-br from-cyan-200/20 to-blue-200/10 rounded-full blur-2xl" />
@@ -55,18 +55,18 @@ export default function PersonaCard({ pattern, address, ethBalance, totalTokens,
         <div className="flex items-start justify-between mb-5">
           <div className="flex items-center gap-4">
             <div className="relative">
-              <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-fuchsia-100 to-purple-100 flex items-center justify-center text-5xl shadow-lg shadow-fuchsia-200/50 pulse-ring">
+              <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-fuchsia-100 to-purple-100 flex items-center justify-center text-3xl sm:text-5xl shadow-lg shadow-fuchsia-200/50 pulse-ring">
                 {pattern.personaEmoji}
               </div>
             </div>
             <div>
-              <h2 className="text-2xl font-black text-gray-800">{pattern.personaType}</h2>
+              <h2 className="text-lg sm:text-2xl font-black text-gray-800">{pattern.personaType}</h2>
               <p className="text-gray-500 text-sm max-w-xs">{pattern.personaDescription}</p>
             </div>
           </div>
           <div className="text-right">
             <div className="text-[10px] text-gray-400 uppercase tracking-widest font-semibold mb-1">Activity Score</div>
-            <div className={`text-5xl font-black bg-gradient-to-r ${scoreColor(pattern.activityScore)} bg-clip-text text-transparent`}>
+            <div className={`text-3xl sm:text-5xl font-black bg-gradient-to-r ${scoreColor(pattern.activityScore)} bg-clip-text text-transparent`}>
               {pattern.activityScore}
             </div>
           </div>
@@ -100,7 +100,7 @@ export default function PersonaCard({ pattern, address, ethBalance, totalTokens,
         )}
 
         {/* Address bar */}
-        <div className="bg-gray-50 rounded-xl px-4 py-2.5 mb-5 flex items-center justify-between border border-gray-100">
+        <div className="bg-gray-50 rounded-xl px-3 py-2 sm:px-4 sm:py-2.5 mb-5 flex items-center justify-between border border-gray-100 gap-2">
           <div className="flex items-center gap-2 min-w-0">
             <span className="text-xs text-gray-400 flex-shrink-0">Address</span>
             <span className="font-mono text-sm text-gray-700 truncate">{address}</span>
@@ -160,7 +160,7 @@ export default function PersonaCard({ pattern, address, ethBalance, totalTokens,
         )}
 
         {/* Stats grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
           <StatBox
             icon={<TrendingUp className="w-4 h-4 text-indigo-500" />}
             label={chain && CHAIN_LABELS[chain] ? `${CHAIN_LABELS[chain].currency} Balance` : "Balance"}
