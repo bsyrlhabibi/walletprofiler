@@ -113,7 +113,7 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="border-b border-gray-200 bg-white/95 backdrop-blur-xl sticky top-0 z-50 shadow-sm">
+      <header className="border-b border-gray-200 bg-white sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <button onClick={goHome} className="flex items-center gap-2.5 hover:opacity-80 transition">
             <WalletLogo size={34} />
