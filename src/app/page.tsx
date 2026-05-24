@@ -29,6 +29,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentChain, setCurrentChain] = useState("eth");
+  const [analyzedChain, setAnalyzedChain] = useState("eth");
   const chainCurrency: Record<string, string> = { eth: "ETH", polygon: "MATIC", arbitrum: "ETH", optimism: "ETH", base: "ETH" };
 
   const handleSearch = async (address: string, chain: string = "eth") => {
@@ -36,6 +37,7 @@ export default function Home() {
     setError(null);
     setProfile(null);
     setCurrentChain(chain);
+    setAnalyzedChain(chain);
 
     try {
       const res = await fetch(`/api/wallet?address=${address}&chain=${chain}`);
@@ -219,13 +221,13 @@ export default function Home() {
               address={profile.address}
               ethBalance={profile.ethBalance}
               totalTokens={profile.tokenBalances.length}
-              chain={currentChain}
               totalValueUsd={profile.totalValueUsd}
               ethBalanceUsd={profile.ethBalanceUsd}
               explorerUrl={profile.explorerUrl}
               walletLabel={profile.walletLabel}
               walletType={profile.walletType}
               walletTag={profile.walletTag}
+              chain={analyzedChain}
             />
 
             {/* Grid: Heatmaps + Risk */}
@@ -258,17 +260,17 @@ export default function Home() {
               <TokenHoldings
                 tokens={profile.tokenBalances}
                 ethBalance={profile.ethBalance}
-                chain={currentChain}
+                chain={analyzedChain}
                 explorerUrl={profile.explorerUrl}
                 nativePriceUsd={profile.ethBalanceUsd / profile.ethBalance || 0}
               />
-              <TxTimeline transactions={profile.transactions} currency={chainCurrency[currentChain] || "ETH"} explorerUrl={profile.explorerUrl} />
+              <TxTimeline transactions={profile.transactions} currency={chainCurrency[analyzedChain] || "ETH"} explorerUrl={profile.explorerUrl} />
             </div>
 
             {/* Footer */}
             <div className="text-center text-xs text-gray-400 py-6">
               <span className="bg-white/60 px-4 py-2 rounded-full border border-gray-100">
-                Powered by Alchemy • {currentChain === "eth" ? "Ethereum" : currentChain === "polygon" ? "Polygon" : currentChain === "arbitrum" ? "Arbitrum" : currentChain === "optimism" ? "Optimism" : "Base"} mainnet • {profile.pattern.totalTransactions} transactions analyzed
+                Powered by Alchemy • {analyzedChain === "eth" ? "Ethereum" : analyzedChain === "polygon" ? "Polygon" : analyzedChain === "arbitrum" ? "Arbitrum" : analyzedChain === "optimism" ? "Optimism" : "Base"} mainnet • {profile.pattern.totalTransactions} transactions analyzed
               </span>
             </div>
           </div>
