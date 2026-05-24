@@ -36,7 +36,7 @@ export default function TokenHoldings({ tokens, ethBalance, chain, explorerUrl =
   const nativeUsd = nativePriceUsd && nativePriceUsd > 0 ? ethBalance * nativePriceUsd : null;
 
   return (
-    <div className="glass-card p-4 animate-fade-in animate-fade-in-delay-2">
+    <div className="glass-card p-4 animate-fade-in animate-fade-in-delay-2 min-h-[400px]">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-semibold text-gray-600 flex items-center gap-2">
           <Coins className="w-4 h-4 text-amber-500" />
