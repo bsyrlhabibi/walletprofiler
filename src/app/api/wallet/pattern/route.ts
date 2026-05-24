@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAssetTransfers, getTokenBalances, getBlock, isAlchemyConfigured, getSupportedChains } from "@/lib/alchemy";
+import { getAssetTransfers, getTokenBalances, getBlock, isAlchemyConfigured, getSupportedChains, getChainCurrency } from "@/lib/alchemy";
 import { analyzeTransactions } from "@/lib/analysis";
 import { Transaction, TokenBalance } from "@/lib/types";
 
@@ -22,6 +22,7 @@ export async function GET(req: NextRequest) {
     }
 
     const addr = address.toLowerCase();
+    const currency = getChainCurrency(chain);
 
     const [outgoing, incoming, ethOnlyOut, ethOnlyIn, rawTokenBalances] = await Promise.all([
       getAssetTransfers(chain, address, undefined, 200),
@@ -31,7 +32,7 @@ export async function GET(req: NextRequest) {
       getTokenBalances(address, chain).catch(() => []),
     ]);
 
-    const allTransfers = [...outgoing, ...incoming];
+    const allTransfers: any[] = [...(outgoing || []), ...(incoming || [])];
     const seen = new Set<string>();
     const unique = allTransfers.filter((t: any) => {
       if (!t.hash || seen.has(t.hash)) return false;
@@ -51,6 +52,7 @@ export async function GET(req: NextRequest) {
       if (from === to) direction = "self";
       else if (to === addr) direction = "in";
 
+      const isNative = t.category === "external";
       return {
         hash: t.hash || "", from, to,
         value: t.value?.toString() || "0",
@@ -61,6 +63,8 @@ export async function GET(req: NextRequest) {
         gasUsed: "0", gasPrice: "0",
         direction,
         category: t.category || "external",
+        asset: isNative ? currency : (t.asset || "???"),
+        tokenName: isNative ? currency : (t.asset || "Unknown"),
       };
     });
 
@@ -99,8 +103,7 @@ export async function GET(req: NextRequest) {
 
     const pattern = analyzeTransactions(transactions, tokenBalances);
 
-    // Override volume with ETH-only
-    const ethTransfers = [...ethOnlyOut, ...ethOnlyIn];
+    const ethTransfers: any[] = [...(ethOnlyOut || []), ...(ethOnlyIn || [])];
     const ethSeen = new Set<string>();
     const uniqueEth = ethTransfers.filter((t: any) => {
       if (!t.hash || ethSeen.has(t.hash)) return false;

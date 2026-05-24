@@ -23,6 +23,8 @@ export interface Transaction {
   gasPrice: string;
   direction: "in" | "out" | "self";
   category: string;
+  asset: string;        // token symbol: "ETH", "POOL", "USDC", etc
+  tokenName: string;    // token full name: "Ethereum", "PoolTogether", etc
 }
 
 export interface TradingPattern {

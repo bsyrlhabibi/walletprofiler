@@ -19,28 +19,21 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Invalid Ethereum address" }, { status: 400 });
     }
 
-    if (!getSupportedChains().includes(chain)) {
-      chain = "eth";
-    }
-
+    if (!getSupportedChains().includes(chain)) chain = "eth";
     if (!isAlchemyConfigured()) {
       return NextResponse.json({ error: "Alchemy API key not configured" }, { status: 500 });
     }
 
     const addr = address.toLowerCase();
     const currency = getChainCurrency(chain);
+    const nativeName = chain === "polygon" ? "Polygon" : chain === "base" ? "Base" : chain === "optimism" ? "Optimism" : chain === "arbitrum" ? "Arbitrum" : "Ethereum";
 
-    // Parallel fetch:
-    // 1. ETH/native balance
-    // 2. ALL transfers (for tx analysis)
-    // 3. ETH-only transfers (for volume)
-    // 4. Token balances
     const [ethBalanceHex, allTransfersOut, allTransfersIn, ethOnlyOut, ethOnlyIn, rawTokenBalances] = await Promise.all([
       getBalance(address, chain),
-      getAssetTransfers(chain, address, undefined, 100), // all categories
-      getAssetTransfers(chain, undefined, address, 100), // all categories
-      getAssetTransfers(chain, address, undefined, 100, ["external"]), // ETH only
-      getAssetTransfers(chain, undefined, address, 100, ["external"]), // ETH only
+      getAssetTransfers(chain, address, undefined, 100),
+      getAssetTransfers(chain, undefined, address, 100),
+      getAssetTransfers(chain, address, undefined, 100, ["external"]),
+      getAssetTransfers(chain, undefined, address, 100, ["external"]),
       getTokenBalances(address, chain).catch(() => []),
     ]);
 
@@ -72,7 +65,7 @@ export async function GET(req: NextRequest) {
     }
 
     // Process ALL transfers for transaction analysis
-    const allTransfers = [...allTransfersOut, ...allTransfersIn];
+    const allTransfers: any[] = [...(allTransfersOut || []), ...(allTransfersIn || [])];
     const seen = new Set<string>();
     const uniqueTransfers = allTransfers.filter((t: any) => {
       if (!t.hash || seen.has(t.hash)) return false;
@@ -84,7 +77,7 @@ export async function GET(req: NextRequest) {
       parseInt(b.blockNum || "0", 16) - parseInt(a.blockNum || "0", 16)
     );
 
-    // Build transactions (for display + analysis)
+    // Build transactions with correct asset info
     const transactions: Transaction[] = uniqueTransfers.map((t: any) => {
       const value = parseFloat(t.value || "0");
       const from = (t.from || "").toLowerCase();
@@ -94,6 +87,7 @@ export async function GET(req: NextRequest) {
       if (from === to) direction = "self";
       else if (to === addr) direction = "in";
 
+      const isNative = t.category === "external";
       return {
         hash: t.hash || "",
         from, to,
@@ -105,11 +99,13 @@ export async function GET(req: NextRequest) {
         gasUsed: "0", gasPrice: "0",
         direction,
         category: t.category || "external",
+        asset: isNative ? currency : (t.asset || "???"),
+        tokenName: isNative ? nativeName : (t.asset || "Unknown"),
       };
     });
 
-    // Build ETH-only transfer list for volume calculation
-    const ethTransfers = [...ethOnlyOut, ...ethOnlyIn];
+    // ETH-only volume
+    const ethTransfers: any[] = [...(ethOnlyOut || []), ...(ethOnlyIn || [])];
     const ethSeen = new Set<string>();
     const uniqueEthTransfers = ethTransfers.filter((t: any) => {
       if (!t.hash || ethSeen.has(t.hash)) return false;
@@ -117,13 +113,10 @@ export async function GET(req: NextRequest) {
       return true;
     });
 
-    // Calculate ETH volume from ETH-only transfers
     let ethVolume = 0;
-    for (const t of uniqueEthTransfers) {
-      ethVolume += parseFloat(t.value || "0");
-    }
+    for (const t of uniqueEthTransfers) ethVolume += parseFloat(t.value || "0");
 
-    // Get timestamps for recent txs
+    // Get timestamps
     const blockNumSet = new Set<number>();
     for (const t of uniqueTransfers.slice(0, 20)) {
       const bn = parseInt(t.blockNum || "0x0", 16);
@@ -144,8 +137,6 @@ export async function GET(req: NextRequest) {
     }
 
     const pattern = analyzeTransactions(transactions, tokenBalances);
-
-    // Override volume with correct ETH-only volume
     pattern.totalVolume = +ethVolume.toFixed(4);
     pattern.avgTxValue = uniqueEthTransfers.length > 0
       ? +(ethVolume / uniqueEthTransfers.length).toFixed(6)
