@@ -122,8 +122,8 @@ export default function TxTimeline({ transactions, currency = "ETH", explorerUrl
           </select>
           <span>Type</span>
         </div>
-        <div className="w-[110px] text-right flex-shrink-0">Amount</div>
-        <div className="w-[80px] text-right flex-shrink-0">Age</div>
+        <div className="w-[110px] text-center flex-shrink-0">Amount</div>
+        <div className="w-[80px] text-center flex-shrink-0">Age</div>
         <div className="w-[20px] flex-shrink-0"></div>
       </div>
 
@@ -140,7 +140,7 @@ export default function TxTimeline({ transactions, currency = "ETH", explorerUrl
               href={`https://${explorerUrl}/tx/${tx.hash}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-between py-2.5 px-3 rounded-xl hover:bg-gray-50 transition group"
+              className="flex items-center justify-between py-2.5 px-3 rounded-xl bg-white border border-gray-100 hover:border-gray-200 hover:bg-gray-50/50 transition group shadow-sm"
             >
               <div className="flex items-center gap-3">
                 <div className={`w-9 h-9 rounded-xl ${getBg(tx.direction)} flex items-center justify-center`}>
