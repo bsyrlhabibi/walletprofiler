@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import SearchBar from "@/components/search-bar";
 import ChainTabs from "@/components/chain-tabs";
 import PersonaCard from "@/components/persona-card";
@@ -33,7 +33,17 @@ export default function Home() {
   const [analyzedChain, setAnalyzedChain] = useState("eth");
   const [analyzedAddress, setAnalyzedAddress] = useState<string | null>(null);
   const chainCurrency: Record<string, string> = { eth: "ETH", polygon: "MATIC", arbitrum: "ETH", optimism: "ETH", base: "ETH" };
-
+  // Handle browser back button (mobile + desktop)
+  useEffect(() => {
+    const onPopState = () => {
+      setProfile(null);
+      setError(null);
+      setLoading(false);
+      setAnalyzedAddress(null);
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
   const handleSearch = async (address: string, chain: string = "eth") => {
     setLoading(true);
     setError(null);
@@ -42,6 +52,9 @@ export default function Home() {
     setAnalyzedChain(chain);
     setAnalyzedAddress(address);
 
+
+    // Push history entry so back button works
+    history.pushState({ address, chain }, "", `/?address=${address}&chain=${chain}`);
     try {
       const res = await fetch(`/api/wallet?address=${address}&chain=${chain}`);
       if (!res.ok) {
@@ -69,10 +82,7 @@ export default function Home() {
   };
 
   const goHome = () => {
-    setProfile(null);
-    setError(null);
-    setLoading(false);
-    setAnalyzedAddress(null);
+    history.back();
   };
 
   return (
