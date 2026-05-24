@@ -338,7 +338,7 @@ export default function Home() {
         {/* Footer - always visible */}
         <footer className="border-t border-gray-200 dark:border-gray-800 mt-6 py-8 space-y-3">
           <div className="flex items-center justify-center gap-2 text-xs text-gray-400 dark:text-gray-500">
-            <span className="bg-white px-4 py-2 rounded-full border border-gray-200 shadow-sm dark:bg-gray-800/60 dark:border-gray-800 dark:shadow-none">
+            <span className="px-4 py-2 rounded-full border border-gray-200 shadow-sm dark:border-gray-800 dark:shadow-none" style={{ backgroundColor: 'var(--header-bg)' }}>
               Powered by Alchemy{profile ? ` • ${analyzedChain === "eth" ? "Ethereum" : analyzedChain === "polygon" ? "Polygon" : analyzedChain === "arbitrum" ? "Arbitrum" : analyzedChain === "optimism" ? "Optimism" : analyzedChain === "bnb" ? "BNB Chain" : "Base"} mainnet • ${profile.pattern.totalTransactions} transactions analyzed` : " • On-Chain Intelligence"}
             </span>
           </div>
