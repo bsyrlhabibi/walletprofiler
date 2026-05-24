@@ -243,6 +243,7 @@ export default function Home() {
               <TokenHoldings
                 tokens={profile.tokenBalances}
                 ethBalance={profile.ethBalance}
+                chain={currentChain}
               />
               <TxTimeline transactions={profile.transactions} currency={chainCurrency[currentChain] || "ETH"} />
             </div>

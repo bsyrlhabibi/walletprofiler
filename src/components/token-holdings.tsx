@@ -6,10 +6,20 @@ import { Coins, ExternalLink, Gem } from "lucide-react";
 interface TokenHoldingsProps {
   tokens: TokenBalance[];
   ethBalance: number;
+  chain?: string;
 }
 
-export default function TokenHoldings({ tokens, ethBalance }: TokenHoldingsProps) {
+const CHAIN_NATIVE: Record<string, { name: string; symbol: string; icon: string; color: string }> = {
+  eth: { name: "Ethereum", symbol: "ETH", icon: "Ξ", color: "from-blue-400 to-indigo-500" },
+  polygon: { name: "Polygon", symbol: "MATIC", icon: "⬡", color: "from-purple-400 to-violet-500" },
+  arbitrum: { name: "Arbitrum", symbol: "ETH", icon: "🔵", color: "from-blue-400 to-sky-500" },
+  optimism: { name: "Optimism", symbol: "ETH", icon: "🔴", color: "from-rose-400 to-red-500" },
+  base: { name: "Base", symbol: "ETH", icon: "🔷", color: "from-sky-400 to-cyan-500" },
+};
+
+export default function TokenHoldings({ tokens, ethBalance, chain }: TokenHoldingsProps) {
   const displayTokens = tokens.slice(0, 15);
+  const native = CHAIN_NATIVE[chain || "eth"] || CHAIN_NATIVE.eth;
 
   return (
     <div className="glass-card p-4 animate-fade-in animate-fade-in-delay-2">
@@ -22,15 +32,15 @@ export default function TokenHoldings({ tokens, ethBalance }: TokenHoldingsProps
       </div>
 
       <div className="space-y-1.5">
-        {/* ETH */}
+        {/* Native token (ETH/MATIC) */}
         <div className="flex items-center justify-between py-2.5 px-3 bg-blue-50/80 rounded-xl border border-blue-100/50 hover:bg-blue-50 transition">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white text-sm font-bold shadow-md shadow-blue-200">
-              Ξ
+            <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${native.color} flex items-center justify-center text-white text-sm font-bold shadow-md shadow-blue-200`}>
+              {native.icon}
             </div>
             <div>
-              <div className="text-sm font-semibold text-gray-800">Ethereum</div>
-              <div className="text-xs text-gray-400">ETH</div>
+              <div className="text-sm font-semibold text-gray-800">{native.name}</div>
+              <div className="text-xs text-gray-400">{native.symbol}</div>
             </div>
           </div>
           <div className="text-right">
@@ -77,7 +87,7 @@ export default function TokenHoldings({ tokens, ethBalance }: TokenHoldingsProps
                   href={`https://etherscan.io/token/${token.contractAddress}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-300 group-hover:text-indigo-400 transition"
+                  className="text-gray-300 group-hover:text-fuchsia-400 transition"
                 >
                   <ExternalLink className="w-3 h-3" />
                 </a>
