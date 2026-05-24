@@ -17,6 +17,7 @@ const CHAIN_NATIVE: Record<string, { name: string; symbol: string; icon: string;
   arbitrum: { name: "Arbitrum", symbol: "ETH", icon: "🔵", color: "from-blue-400 to-sky-500" },
   optimism: { name: "Optimism", symbol: "ETH", icon: "🔴", color: "from-rose-400 to-red-500" },
   base: { name: "Base", symbol: "ETH", icon: "🔷", color: "from-sky-400 to-cyan-500" },
+  bnb: { name: "BNB Chain", symbol: "BNB", icon: "🟡", color: "from-yellow-400 to-amber-500" },
 };
 
 export default function TokenHoldings({ tokens, ethBalance, chain, explorerUrl = "etherscan.io", nativePriceUsd }: TokenHoldingsProps) {

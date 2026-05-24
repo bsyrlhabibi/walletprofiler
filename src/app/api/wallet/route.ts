@@ -78,7 +78,7 @@ export async function GET(req: NextRequest) {
 
     const addr = address.toLowerCase();
     const currency = getChainCurrency(chain);
-    const nativeName = chain === "polygon" ? "Polygon" : chain === "base" ? "Base" : chain === "optimism" ? "Optimism" : chain === "arbitrum" ? "Arbitrum" : "Ethereum";
+    const nativeName = chain === "polygon" ? "Polygon" : chain === "base" ? "Base" : chain === "optimism" ? "Optimism" : chain === "arbitrum" ? "Arbitrum" : chain === "bnb" ? "BNB Chain" : "Ethereum";
     const explorerUrl = getExplorerUrl(chain);
 
     // Fetch more transfers (200 each direction) for richer grouping

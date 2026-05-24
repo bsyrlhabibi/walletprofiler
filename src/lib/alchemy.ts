@@ -6,6 +6,7 @@ const CHAIN_ENDPOINTS: Record<string, string> = {
   arbitrum: "arb-mainnet",
   optimism: "opt-mainnet",
   base: "base-mainnet",
+  bnb: "bnb-mainnet",
 };
 
 const CHAIN_EXPLORER: Record<string, string> = {
@@ -14,6 +15,7 @@ const CHAIN_EXPLORER: Record<string, string> = {
   arbitrum: "arbiscan.io",
   optimism: "optimistic.etherscan.io",
   base: "basescan.org",
+  bnb: "bscscan.com",
 };
 
 const CHAIN_CURRENCY: Record<string, string> = {
@@ -22,6 +24,7 @@ const CHAIN_CURRENCY: Record<string, string> = {
   arbitrum: "ETH",
   optimism: "ETH",
   base: "ETH",
+  bnb: "BNB",
 };
 
 const CHAIN_NAMES: Record<string, string> = {
@@ -30,6 +33,7 @@ const CHAIN_NAMES: Record<string, string> = {
   arbitrum: "Arbitrum",
   optimism: "Optimism",
   base: "Base",
+  bnb: "BNB Chain",
 };
 
 // CoinGecko IDs for native tokens
@@ -39,6 +43,7 @@ const CHAIN_COINGECKO_ID: Record<string, string> = {
   arbitrum: "ethereum",
   optimism: "ethereum",
   base: "ethereum",
+  bnb: "binancecoin",
 };
 
 function getBaseUrl(chain: string): string {
@@ -145,6 +150,11 @@ const TOKEN_COINGECKO_MAP: Record<string, string> = {
   RPL: "rocket-pool",
   ARB: "arbitrum",
   OP: "optimism",
+  BNB: "binancecoin",
+  WBNB: "binancecoin",
+  CAKE: "pancakeswap-token",
+  XVS: "venus",
+  BUSD: "binance-usd",
 };
 
 export function getCoinGeckoId(symbol: string): string | null {
@@ -174,3 +184,4 @@ export function getExplorerUrl(chain: string): string {
 export function getChainCoinGeckoId(chain: string): string {
   return CHAIN_COINGECKO_ID[chain] || "ethereum";
 }
+

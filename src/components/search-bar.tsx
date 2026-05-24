@@ -17,6 +17,7 @@ const CHAINS = [
   { id: "arbitrum", label: "Arbitrum", icon: "🔵", color: "bg-blue-50 text-blue-600 border-blue-200" },
   { id: "optimism", label: "Optimism", icon: "🔴", color: "bg-rose-50 text-rose-600 border-rose-200" },
   { id: "base", label: "Base", icon: "🔷", color: "bg-sky-50 text-sky-600 border-sky-200" },
+  { id: "bnb", label: "BNB", icon: "🟡", color: "bg-yellow-50 text-yellow-600 border-yellow-200" },
 ];
 
 export default function SearchBar({ onSearch, loading, chain: chainProp, onChainChange, showChainSelector = true }: SearchBarProps) {

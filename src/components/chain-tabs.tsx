@@ -12,6 +12,7 @@ const CHAINS = [
   { id: "arbitrum", label: "Arbitrum", icon: "🔵", color: "bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100" },
   { id: "optimism", label: "Optimism", icon: "🔴", color: "bg-rose-50 text-rose-600 border-rose-200 hover:bg-rose-100" },
   { id: "base", label: "Base", icon: "🔷", color: "bg-sky-50 text-sky-600 border-sky-200 hover:bg-sky-100" },
+  { id: "bnb", label: "BNB", icon: "🟡", color: "bg-yellow-50 text-yellow-600 border-yellow-200 hover:bg-yellow-100" },
 ];
 
 export default function ChainTabs({ activeChain, onChainChange, loading }: ChainTabsProps) {

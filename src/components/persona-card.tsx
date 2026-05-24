@@ -9,6 +9,7 @@ const CHAIN_LABELS: Record<string, { name: string; icon: string; color: string; 
   arbitrum: { name: "Arbitrum", icon: "🔵", color: "bg-blue-100 text-blue-700", currency: "ETH" },
   optimism: { name: "Optimism", icon: "🔴", color: "bg-rose-100 text-rose-700", currency: "ETH" },
   base: { name: "Base", icon: "🔷", color: "bg-sky-100 text-sky-700", currency: "ETH" },
+  bnb: { name: "BNB Chain", icon: "🟡", color: "bg-yellow-100 text-yellow-700", currency: "BNB" },
 };
 import { useState } from "react";
 
