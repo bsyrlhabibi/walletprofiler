@@ -28,13 +28,13 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSearch = async (address: string) => {
+  const handleSearch = async (address: string, chain: string = "eth") => {
     setLoading(true);
     setError(null);
     setProfile(null);
 
     try {
-      const res = await fetch(`/api/wallet?address=${address}&chain=eth`);
+      const res = await fetch(`/api/wallet?address=${address}&chain=${chain}`);
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.error || `HTTP ${res.status}`);
