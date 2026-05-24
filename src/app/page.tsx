@@ -309,7 +309,7 @@ export default function Home() {
             )}
 
             {/* Grid: Tokens + Transactions */}
-            <div className="grid grid-cols-1 lg:grid-cols-[2fr_3fr] gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-[2fr_3fr] gap-4 items-start">
               <TokenHoldings
                 tokens={profile.tokenBalances}
                 ethBalance={profile.ethBalance}
