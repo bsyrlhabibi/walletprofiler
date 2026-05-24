@@ -1,7 +1,7 @@
 "use client";
 
 import { TradingPattern } from "@/lib/types";
-import { TrendingUp, Flame, Zap, Copy, Check, Layers, Link2, ExternalLink } from "lucide-react";
+import { TrendingUp, Flame, Zap, Copy, Check, Layers, Link2, ExternalLink, Tag } from "lucide-react";
 
 const CHAIN_LABELS: Record<string, { name: string; icon: string; color: string; currency: string }> = {
   eth: { name: "Ethereum", icon: "⟠", color: "bg-indigo-100 text-indigo-700", currency: "ETH" },
@@ -11,7 +11,6 @@ const CHAIN_LABELS: Record<string, { name: string; icon: string; color: string; 
   base: { name: "Base", icon: "🔷", color: "bg-sky-100 text-sky-700", currency: "ETH" },
 };
 import { useState } from "react";
-import { BadgeCheck, Tag } from "lucide-react";
 
 interface PersonaCardProps {
   pattern: TradingPattern;
@@ -22,13 +21,12 @@ interface PersonaCardProps {
   totalValueUsd?: number;
   ethBalanceUsd?: number;
   explorerUrl?: string;
-  ensName?: string | null;
   walletLabel?: string | null;
   walletType?: string | null;
   walletTag?: string | null;
 }
 
-export default function PersonaCard({ pattern, address, ethBalance, totalTokens, chain, totalValueUsd, ethBalanceUsd, explorerUrl, ensName, walletLabel, walletType, walletTag }: PersonaCardProps) {
+export default function PersonaCard({ pattern, address, ethBalance, totalTokens, chain, totalValueUsd, ethBalanceUsd, explorerUrl, walletLabel, walletType, walletTag }: PersonaCardProps) {
   const [copied, setCopied] = useState(false);
 
   const copyAddr = () => {
@@ -83,28 +81,20 @@ export default function PersonaCard({ pattern, address, ethBalance, totalTokens,
           </div>
         )}
 
-        {/* ENS Name + Known Wallet Label */}
-        {(ensName || walletLabel) && (
+        {/* Known Wallet Label */}
+        {walletLabel && (
           <div className="flex items-center gap-2 mb-3 flex-wrap">
-            {ensName && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-700 border border-indigo-200">
-                <BadgeCheck className="w-4 h-4 text-indigo-500" />
-                {ensName}
-              </span>
-            )}
-            {walletLabel && (
-              <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold ${
-                walletType === "exchange" ? "bg-amber-50 text-amber-700 border-amber-200" :
-                walletType === "protocol" ? "bg-purple-50 text-purple-700 border-purple-200" :
-                walletType === "dao" ? "bg-emerald-50 text-emerald-700 border-emerald-200" :
-                walletType === "bot" ? "bg-gray-50 text-gray-600 border-gray-200" :
-                "bg-blue-50 text-blue-700 border-blue-200"
-              } border`}>
-                <Tag className="w-3.5 h-3.5" />
-                {walletLabel}
-                {walletTag && <span className="text-xs opacity-70">({walletTag})</span>}
-              </span>
-            )}
+            <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold ${
+              walletType === "exchange" ? "bg-amber-50 text-amber-700 border-amber-200" :
+              walletType === "protocol" ? "bg-purple-50 text-purple-700 border-purple-200" :
+              walletType === "dao" ? "bg-emerald-50 text-emerald-700 border-emerald-200" :
+              walletType === "bot" ? "bg-gray-50 text-gray-600 border-gray-200" :
+              "bg-blue-50 text-blue-700 border-blue-200"
+            } border`}>
+              <Tag className="w-3.5 h-3.5" />
+              {walletLabel}
+              {walletTag && <span className="text-xs opacity-70">({walletTag})</span>}
+            </span>
           </div>
         )}
 

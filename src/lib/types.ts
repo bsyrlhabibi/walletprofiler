@@ -60,7 +60,6 @@ export interface TradingPattern {
 
 export interface WalletProfile {
   address: string;
-  ensName: string | null;
   walletLabel: string | null;
   walletType: string | null;
   walletTag: string | null;
