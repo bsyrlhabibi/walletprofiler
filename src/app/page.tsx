@@ -142,7 +142,7 @@ export default function Home() {
               className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-fuchsia-600 px-3 py-1.5 rounded-lg hover:bg-fuchsia-50 transition font-medium"
             >
               <Globe className="w-3.5 h-3.5" />
-              Explorer
+              Etherscan
             </a>
             <a
               href="https://github.com/bsyrlhabibi/walletprofiler"
