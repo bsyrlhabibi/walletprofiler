@@ -74,7 +74,7 @@ export default function SearchBar({ onSearch, loading, chain: chainProp, onChain
               </button>
 
               {showChains && (
-                <div className="absolute top-full left-0 mt-1 bg-white rounded-xl shadow-2xl border border-gray-200 py-1 z-[200] min-w-[160px] animate-fade-in">
+                <div className="absolute top-full left-0 mt-1 bg-white rounded-xl shadow-2xl border border-gray-200 py-1 z-[200] min-w-[160px] animate-fade-in max-h-[60vh] overflow-y-auto scrollbar-thin">
                   {CHAINS.map((c) => (
                     <button
                       key={c.id}
