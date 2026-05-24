@@ -12,7 +12,7 @@ interface TxTimelineProps {
 
 export default function TxTimeline({ transactions, currency = "ETH", explorerUrl = "etherscan.io" }: TxTimelineProps) {
   const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(10);
+  const [perPage, setPerPage] = useState(5);
   const [filter, setFilter] = useState<"all" | "in" | "out">("all");
   const filteredTxs = filter === "all"
     ? transactions
