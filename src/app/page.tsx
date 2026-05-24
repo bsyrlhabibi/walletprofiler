@@ -214,7 +214,7 @@ export default function Home() {
                   <button
                     key={ex.label}
                     onClick={() => handleSearch(ex.addr, ex.chain)}
-                    className="text-sm text-fuchsia-600 dark:text-fuchsia-400 hover:text-fuchsia-700 bg-white dark:bg-gray-800 hover:bg-fuchsia-50 dark:hover:bg-fuchsia-950 px-4 py-2 rounded-xl transition font-medium border border-fuchsia-100 dark:border-fuchsia-900 hover:border-fuchsia-200 shadow-sm hover:shadow-md"
+                    className="text-sm text-fuchsia-600 dark:text-fuchsia-400 hover:text-fuchsia-700 bg-white hover:bg-fuchsia-50 dark:bg-gray-800 dark:hover:bg-fuchsia-950 px-4 py-2 rounded-xl transition font-medium border border-gray-200 dark:border-fuchsia-900 hover:border-fuchsia-300 shadow-sm hover:shadow-md"
                   >
                     {ex.label}
                   </button>
@@ -338,7 +338,7 @@ export default function Home() {
         {/* Footer - always visible */}
         <footer className="border-t border-gray-200 dark:border-gray-800 mt-6 py-8 space-y-3">
           <div className="flex items-center justify-center gap-2 text-xs text-gray-400 dark:text-gray-500">
-            <span className="bg-white/60 dark:bg-gray-800/60 px-4 py-2 rounded-full border border-gray-100 dark:border-gray-800">
+            <span className="bg-white px-4 py-2 rounded-full border border-gray-200 shadow-sm dark:bg-gray-800/60 dark:border-gray-800 dark:shadow-none">
               Powered by Alchemy{profile ? ` • ${analyzedChain === "eth" ? "Ethereum" : analyzedChain === "polygon" ? "Polygon" : analyzedChain === "arbitrum" ? "Arbitrum" : analyzedChain === "optimism" ? "Optimism" : analyzedChain === "bnb" ? "BNB Chain" : "Base"} mainnet • ${profile.pattern.totalTransactions} transactions analyzed` : " • On-Chain Intelligence"}
             </span>
           </div>

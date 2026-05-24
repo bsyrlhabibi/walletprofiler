@@ -55,7 +55,7 @@ export default function SearchBar({ onSearch, loading, chain: chainProp, onChain
         <div className="absolute -inset-1 bg-gradient-to-r from-fuchsia-500 via-purple-500 to-indigo-500 rounded-2xl opacity-30 group-hover:opacity-60 blur-md transition duration-300 pointer-events-none" />
 
         {/* Input container */}
-        <div className="relative flex items-center glass-card rounded-2xl">
+        <div className="relative flex items-center glass-card rounded-2xl shadow-lg shadow-fuchsia-200/30 dark:shadow-none">
           {/* Chain selector (optional) */}
           {showChainSelector && (
             <div ref={dropdownRef} className="relative ml-2 flex-shrink-0">
