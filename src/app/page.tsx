@@ -275,9 +275,9 @@ export default function Home() {
         {profile && !loading && (
           <div className="space-y-5">
             {/* Search bar (no dropdown) + Chain tabs */}
-            <div className="space-y-5">
+            <div className="space-y-4 pt-2">
               <SearchBar onSearch={handleSearch} loading={loading} chain={analyzedChain} showChainSelector={false} />
-              <div className="mt-2">
+              <div className="pt-1">
                 <ChainTabs activeChain={analyzedChain} onChainChange={handleChainSwitch} loading={loading} />
               </div>
             </div>
