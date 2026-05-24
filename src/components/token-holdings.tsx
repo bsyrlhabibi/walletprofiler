@@ -23,9 +23,15 @@ const CHAIN_NATIVE: Record<string, { name: string; symbol: string; icon: string;
 export default function TokenHoldings({ tokens, ethBalance, chain, explorerUrl = "etherscan.io", nativePriceUsd }: TokenHoldingsProps) {
   const native = CHAIN_NATIVE[chain || "eth"] || CHAIN_NATIVE.eth;
 
-  const valuedTokens = tokens
-    .filter((t) => t.valueUsd && t.valueUsd > 0)
-    .sort((a, b) => (b.valueUsd || 0) - (a.valueUsd || 0));
+  // Sort: tokens with USD value first (desc), then those without
+  const sortedTokens = [...tokens].sort((a, b) => {
+    const aVal = a.valueUsd || 0;
+    const bVal = b.valueUsd || 0;
+    if (aVal > 0 && bVal > 0) return bVal - aVal;
+    if (aVal > 0) return -1;
+    if (bVal > 0) return 1;
+    return b.balanceFormatted - a.balanceFormatted;
+  });
 
   const nativeUsd = nativePriceUsd && nativePriceUsd > 0 ? ethBalance * nativePriceUsd : null;
 
@@ -63,8 +69,8 @@ export default function TokenHoldings({ tokens, ethBalance, chain, explorerUrl =
           </div>
         </div>
 
-        {/* ERC-20 tokens — only with USD value */}
-        {valuedTokens.map((token) => {
+        {/* ERC-20 tokens — all tokens */}
+        {sortedTokens.map((token) => {
           const formatted = token.balanceFormatted;
 
           const displayBalance = formatted > 1000000
@@ -95,13 +101,19 @@ export default function TokenHoldings({ tokens, ethBalance, chain, explorerUrl =
               </div>
               <div className="flex items-center gap-2">
                 <div className="text-right">
-                  <div className="text-sm font-bold text-gray-800">
-                    ${token.valueUsd!.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                  </div>
-                  {token.priceUsd && token.priceUsd > 0 && (
-                    <div className="text-[10px] text-gray-400">
-                      @${token.priceUsd >= 1 ? token.priceUsd.toFixed(2) : token.priceUsd.toFixed(6)}
-                    </div>
+                  {token.valueUsd && token.valueUsd > 0 ? (
+                    <>
+                      <div className="text-sm font-bold text-gray-800">
+                        ${token.valueUsd.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </div>
+                      {token.priceUsd && token.priceUsd > 0 && (
+                        <div className="text-[10px] text-gray-400">
+                          @${token.priceUsd >= 1 ? token.priceUsd.toFixed(2) : token.priceUsd.toFixed(6)}
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div className="text-sm text-gray-300">—</div>
                   )}
                 </div>
                 <a
@@ -117,7 +129,7 @@ export default function TokenHoldings({ tokens, ethBalance, chain, explorerUrl =
           );
         })}
 
-        {valuedTokens.length === 0 && (
+        {sortedTokens.length === 0 && (
           <div className="text-center text-gray-400 text-sm py-6">
             No tokens with USD value found
           </div>
