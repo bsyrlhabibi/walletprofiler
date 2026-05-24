@@ -43,7 +43,13 @@ export interface TradingPattern {
   preferredTokens: { symbol: string; count: number }[];
   activityByHour: number[];
   activityByDay: number[];
-  riskScore: number;
+  // Rebranded scores
+  activityScore: number;   // seberapa aktif on-chain (0-100)
+  trustScore: number;      // seberapa legit/aman wallet ini (0-100)
+  trustLevel: string;      // "Trusted" | "Moderate" | "Caution" | "Risky"
+  trustFactors: string[];  // alasan trust score
+  activityFactors: string[]; // alasan activity score
+  // Persona
   personaType: string;
   personaEmoji: string;
   personaDescription: string;

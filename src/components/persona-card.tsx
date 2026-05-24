@@ -1,7 +1,7 @@
 "use client";
 
 import { TradingPattern } from "@/lib/types";
-import { Shield, TrendingUp, Flame, Zap, Copy, Check } from "lucide-react";
+import { TrendingUp, Flame, Zap, Copy, Check, Layers } from "lucide-react";
 import { useState } from "react";
 
 interface PersonaCardProps {
@@ -21,25 +21,17 @@ export default function PersonaCard({ pattern, address, ethBalance, totalTokens 
   };
 
   const scoreColor = (score: number) => {
-    if (score >= 80) return "from-rose-500 to-orange-500";
-    if (score >= 60) return "from-orange-500 to-amber-500";
-    if (score >= 40) return "from-emerald-500 to-teal-500";
-    if (score >= 20) return "from-blue-500 to-indigo-500";
-    return "from-gray-400 to-gray-500";
-  };
-
-  const scoreTextColor = (score: number) => {
-    if (score >= 80) return "text-rose-600";
-    if (score >= 60) return "text-orange-600";
-    if (score >= 40) return "text-emerald-600";
-    if (score >= 20) return "text-blue-600";
-    return "text-gray-500";
+    if (score >= 80) return "from-fuchsia-500 to-purple-600";
+    if (score >= 60) return "from-indigo-500 to-blue-600";
+    if (score >= 40) return "from-cyan-500 to-teal-500";
+    if (score >= 20) return "from-gray-400 to-gray-500";
+    return "from-gray-300 to-gray-400";
   };
 
   return (
     <div className="glass-card p-6 animate-fade-in relative overflow-hidden">
       {/* Decorative blobs */}
-      <div className="absolute -top-20 -right-20 w-60 h-60 bg-gradient-to-br from-indigo-200/30 to-purple-200/20 rounded-full blur-3xl" />
+      <div className="absolute -top-20 -right-20 w-60 h-60 bg-gradient-to-br from-fuchsia-200/30 to-purple-200/20 rounded-full blur-3xl" />
       <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-gradient-to-br from-cyan-200/20 to-blue-200/10 rounded-full blur-2xl" />
 
       <div className="relative">
@@ -47,7 +39,7 @@ export default function PersonaCard({ pattern, address, ethBalance, totalTokens 
         <div className="flex items-start justify-between mb-5">
           <div className="flex items-center gap-4">
             <div className="relative">
-              <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center text-5xl shadow-lg shadow-indigo-200/50 pulse-ring">
+              <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-fuchsia-100 to-purple-100 flex items-center justify-center text-5xl shadow-lg shadow-fuchsia-200/50 pulse-ring">
                 {pattern.personaEmoji}
               </div>
             </div>
@@ -57,10 +49,10 @@ export default function PersonaCard({ pattern, address, ethBalance, totalTokens 
             </div>
           </div>
           <div className="text-right">
-            <div className={`text-5xl font-black bg-gradient-to-r ${scoreColor(pattern.degenScore)} bg-clip-text text-transparent`}>
-              {pattern.degenScore}
+            <div className="text-[10px] text-gray-400 uppercase tracking-widest font-semibold mb-1">Activity Score</div>
+            <div className={`text-5xl font-black bg-gradient-to-r ${scoreColor(pattern.activityScore)} bg-clip-text text-transparent`}>
+              {pattern.activityScore}
             </div>
-            <div className="text-[10px] text-gray-400 uppercase tracking-widest font-semibold">Degen Score</div>
           </div>
         </div>
 
@@ -70,21 +62,21 @@ export default function PersonaCard({ pattern, address, ethBalance, totalTokens 
             <span className="text-xs text-gray-400 flex-shrink-0">Address</span>
             <span className="font-mono text-sm text-gray-700 truncate">{address}</span>
           </div>
-          <button onClick={copyAddr} className="text-gray-400 hover:text-indigo-500 transition ml-2 flex-shrink-0">
+          <button onClick={copyAddr} className="text-gray-400 hover:text-fuchsia-500 transition ml-2 flex-shrink-0">
             {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
           </button>
         </div>
 
-        {/* Score bar */}
+        {/* Activity bar */}
         <div className="mb-5">
           <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
             <div
-              className={`h-full bg-gradient-to-r ${scoreColor(pattern.degenScore)} rounded-full transition-all duration-1000 score-bar-shimmer`}
-              style={{ width: `${pattern.degenScore}%` }}
+              className={`h-full bg-gradient-to-r ${scoreColor(pattern.activityScore)} rounded-full transition-all duration-1000 score-bar-shimmer`}
+              style={{ width: `${pattern.activityScore}%` }}
             />
           </div>
           <div className="flex justify-between mt-1">
-            <span className="text-[10px] text-gray-400">Observer</span>
+            <span className="text-[10px] text-gray-400">Observer 👀</span>
             <span className="text-[10px] text-gray-400">Whale Degen 🐋</span>
           </div>
         </div>
@@ -113,11 +105,11 @@ export default function PersonaCard({ pattern, address, ethBalance, totalTokens 
             color="amber"
           />
           <StatBox
-            icon={<Shield className="w-4 h-4 text-emerald-500" />}
-            label="Risk Score"
-            value={`${pattern.riskScore}/100`}
-            sub={`${pattern.uniqueContracts} contracts`}
-            color="emerald"
+            icon={<Layers className="w-4 h-4 text-fuchsia-500" />}
+            label="Contracts"
+            value={pattern.uniqueContracts.toString()}
+            sub={`${pattern.uniqueTokens} tokens held`}
+            color="fuchsia"
           />
         </div>
       </div>
@@ -136,7 +128,7 @@ function StatBox({ icon, label, value, sub, color }: {
     indigo: "bg-indigo-50 border-indigo-100",
     orange: "bg-orange-50 border-orange-100",
     amber: "bg-amber-50 border-amber-100",
-    emerald: "bg-emerald-50 border-emerald-100",
+    fuchsia: "bg-fuchsia-50 border-fuchsia-100",
   };
 
   return (

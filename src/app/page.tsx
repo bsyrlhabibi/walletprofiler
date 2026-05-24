@@ -6,7 +6,7 @@ import PersonaCard from "@/components/persona-card";
 import ActivityHeatmap from "@/components/activity-heatmap";
 import TokenHoldings from "@/components/token-holdings";
 import TxTimeline from "@/components/tx-timeline";
-import RiskMeter from "@/components/risk-meter";
+import TrustActivityPanel from "@/components/trust-activity-panel";
 import { WalletProfile } from "@/lib/types";
 import { Sparkles, Zap, Shield, BarChart3, AlertTriangle, ArrowLeft, Wallet, Globe } from "lucide-react";
 
@@ -231,7 +231,7 @@ export default function Home() {
                 title="Activity by Day"
                 type="daily"
               />
-              <RiskMeter pattern={profile.pattern} />
+              <TrustActivityPanel pattern={profile.pattern} />
             </div>
 
             {/* Grid: Tokens + Transactions */}
