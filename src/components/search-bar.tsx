@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useRef, useEffect } from "react";
 import { Search, Loader2, Sparkles, ChevronDown } from "lucide-react";
 
 interface SearchBarProps {
@@ -9,19 +9,33 @@ interface SearchBarProps {
 }
 
 const CHAINS = [
-  { id: "eth", label: "Ethereum", icon: "⟠", color: "bg-indigo-50 text-indigo-600 border-indigo-100" },
-  { id: "polygon", label: "Polygon", icon: "⬡", color: "bg-purple-50 text-purple-600 border-purple-100" },
-  { id: "arbitrum", label: "Arbitrum", icon: "🔵", color: "bg-blue-50 text-blue-600 border-blue-100" },
-  { id: "optimism", label: "Optimism", icon: "🔴", color: "bg-rose-50 text-rose-600 border-rose-100" },
-  { id: "base", label: "Base", icon: "🔷", color: "bg-sky-50 text-sky-600 border-sky-100" },
+  { id: "eth", label: "Ethereum", icon: "⟠", color: "bg-indigo-50 text-indigo-600 border-indigo-200" },
+  { id: "polygon", label: "Polygon", icon: "⬡", color: "bg-purple-50 text-purple-600 border-purple-200" },
+  { id: "arbitrum", label: "Arbitrum", icon: "🔵", color: "bg-blue-50 text-blue-600 border-blue-200" },
+  { id: "optimism", label: "Optimism", icon: "🔴", color: "bg-rose-50 text-rose-600 border-rose-200" },
+  { id: "base", label: "Base", icon: "🔷", color: "bg-sky-50 text-sky-600 border-sky-200" },
 ];
 
 export default function SearchBar({ onSearch, loading }: SearchBarProps) {
   const [input, setInput] = useState("");
   const [chain, setChain] = useState("eth");
   const [showChains, setShowChains] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const selectedChain = CHAINS.find((c) => c.id === chain) || CHAINS[0];
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setShowChains(false);
+      }
+    }
+    if (showChains) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showChains]);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -34,66 +48,89 @@ export default function SearchBar({ onSearch, loading }: SearchBarProps) {
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-2xl mx-auto">
       <div className="relative group">
-        <div className="absolute -inset-1 bg-gradient-to-r from-fuchsia-500 via-purple-500 to-indigo-500 rounded-2xl opacity-30 group-hover:opacity-60 blur-md transition duration-300" />
-        <div className="relative flex items-center glass-card rounded-2xl overflow-hidden">
-          {/* Chain selector */}
-          <div className="relative ml-2">
+        {/* Glow */}
+        <div className="absolute -inset-1 bg-gradient-to-r from-fuchsia-500 via-purple-500 to-indigo-500 rounded-2xl opacity-30 group-hover:opacity-60 blur-md transition duration-300 pointer-events-none" />
+
+        {/* Input container */}
+        <div className="relative flex items-center glass-card rounded-2xl">
+          {/* Chain selector — positioned outside overflow */}
+          <div ref={dropdownRef} className="relative ml-2 flex-shrink-0">
             <button
               type="button"
-              onClick={() => setShowChains(!showChains)}
-              className={`flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-semibold border transition ${selectedChain.color}`}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setShowChains(!showChains);
+              }}
+              className={`flex items-center gap-1 px-3 py-2.5 rounded-xl text-xs font-semibold border transition cursor-pointer hover:opacity-80 active:scale-95 ${selectedChain.color}`}
             >
-              <span>{selectedChain.icon}</span>
+              <span className="text-base">{selectedChain.icon}</span>
               <span className="hidden sm:inline">{selectedChain.label}</span>
-              <ChevronDown className="w-3 h-3" />
+              <ChevronDown className={`w-3 h-3 transition-transform ${showChains ? "rotate-180" : ""}`} />
             </button>
+
+            {/* Dropdown menu */}
             {showChains && (
-              <div className="absolute top-full left-0 mt-1 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-50 min-w-[140px]">
+              <div className="absolute top-full left-0 mt-2 bg-white rounded-xl shadow-2xl border border-gray-200 py-1 z-[100] min-w-[160px] animate-fade-in">
                 {CHAINS.map((c) => (
                   <button
                     key={c.id}
                     type="button"
-                    onClick={() => { setChain(c.id); setShowChains(false); }}
-                    className={`w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-50 transition ${c.id === chain ? "font-semibold" : "text-gray-600"}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setChain(c.id);
+                      setShowChains(false);
+                    }}
+                    className={`w-full flex items-center gap-2.5 px-4 py-2.5 text-sm hover:bg-gray-50 transition cursor-pointer ${
+                      c.id === chain ? "font-bold text-fuchsia-600 bg-fuchsia-50" : "text-gray-600"
+                    }`}
                   >
-                    <span>{c.icon}</span>
+                    <span className="text-base">{c.icon}</span>
                     {c.label}
+                    {c.id === chain && <span className="ml-auto text-fuchsia-500">✓</span>}
                   </button>
                 ))}
               </div>
             )}
           </div>
 
-          <div className="ml-2 p-2 rounded-xl bg-fuchsia-50">
+          {/* Search icon */}
+          <div className="ml-2 p-2 rounded-xl bg-fuchsia-50 flex-shrink-0">
             <Search className="w-5 h-5 text-fuchsia-500" />
           </div>
+
+          {/* Input */}
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Enter wallet address (0x...)"
-            className="flex-1 bg-transparent text-gray-800 px-4 py-4 outline-none placeholder:text-gray-400 font-mono text-sm"
+            className="flex-1 bg-transparent text-gray-800 px-4 py-4 outline-none placeholder:text-gray-400 font-mono text-sm min-w-0"
             disabled={loading}
           />
+
+          {/* Submit button */}
           <button
             type="submit"
             disabled={loading || !input.trim()}
-            className="mr-2 px-6 py-2.5 bg-gradient-to-r from-fuchsia-500 to-purple-600 text-white rounded-xl font-semibold text-sm hover:from-fuchsia-400 hover:to-purple-500 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center gap-2 shadow-lg shadow-fuchsia-500/20"
+            className="mr-2 px-5 py-2.5 bg-gradient-to-r from-fuchsia-500 to-purple-600 text-white rounded-xl font-semibold text-sm hover:from-fuchsia-400 hover:to-purple-500 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center gap-2 shadow-lg shadow-fuchsia-500/20 flex-shrink-0"
           >
             {loading ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                Analyzing...
+                <span className="hidden sm:inline">Analyzing...</span>
               </>
             ) : (
               <>
                 <Sparkles className="w-4 h-4" />
-                Analyze
+                <span className="hidden sm:inline">Analyze</span>
               </>
             )}
           </button>
         </div>
       </div>
+
       <p className="text-center text-gray-400 text-xs mt-4">
         Supports Ethereum, Polygon, Arbitrum, Optimism, and Base
       </p>
